@@ -1,0 +1,5 @@
+# This file is used to specify the dependencies for the Lambda function.
+# It is used by the `requirements.txt` file in the Lambda directory.
+# The `requirements.txt` file is used by the `pip` command to install the dependencies.
+
+# The `pip` command is used to install the dependencies
