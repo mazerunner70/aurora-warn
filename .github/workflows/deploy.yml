@@ -31,16 +31,22 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}  # Change this to your preferred region
+        aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Terraform Init
-      run: terraform init
+      run: |
+        cd lambda
+        terraform init
 
     - name: Terraform Plan
-      run: terraform plan -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}"
+      run: |
+        cd lambda
+        terraform plan -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}"
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}"
+      run: |
+        cd lambda
+        terraform apply -auto-approve -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}"
 
     - name: Build Lambda function
       run: |
