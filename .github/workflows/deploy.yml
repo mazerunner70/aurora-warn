@@ -41,12 +41,12 @@ jobs:
     - name: Terraform Plan
       run: |
         cd lambda
-        terraform plan -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}"
+        terraform plan -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}" -var="aws_region=${{ secrets.AWS_REGION }}"
 
     - name: Terraform Apply
       run: |
         cd lambda
-        terraform apply -auto-approve -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}"
+        terraform apply -auto-approve -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}" -var="aws_region=${{ secrets.AWS_REGION }}"
 
     - name: Build Lambda function
       run: |

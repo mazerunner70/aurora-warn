@@ -1,10 +1,17 @@
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+  default     = "eu-west-2"  # Change this to your preferred default region
+}
+
 provider "aws" {
-  region = "us-west-2"  # Change this to your preferred region
+  region = var.aws_region  # Use the variable for the region
 }
 
 variable "lambda_function_name" {
   description = "Name of the Lambda function"
   type        = string
+  default     = "aurora_watch"  # Change this to your preferred default name
 }
 
 data "archive_file" "lambda_zip" {
@@ -13,9 +20,14 @@ data "archive_file" "lambda_zip" {
   output_path = "aurora_watch_lambda.zip"
 }
 
+import {
+  id = "arn:aws:lambda:${var.aws_region}:372539347496:function:${aws_lambda_function.aurora_watch.function_name}"  # Use the variable for the function name
+  to = aws_lambda_function.aurora_watch
+}
+
 resource "aws_lambda_function" "aurora_watch" {
   filename      = "function.zip"
-  function_name = var.lambda_function_name
+  function_name = var.lambda_function_name  # Use the variable for the function name
   role          = aws_iam_role.lambda_exec.arn
   handler       = "lambda_function.lambda_handler"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
@@ -26,6 +38,11 @@ resource "aws_lambda_function" "aurora_watch" {
       PYTHONPATH = "/var/task"
     }
   }
+}
+
+import {
+  id = "arn:aws:iam::372539347496:role/${var.lambda_function_name}-dev-lambda-exec"  # Update to use the variable
+  to = aws_iam_role.lambda_exec
 }
 
 resource "aws_iam_role" "lambda_exec" {
