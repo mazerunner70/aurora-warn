@@ -41,7 +41,7 @@ resource "aws_lambda_function" "aurora_watch" {
 }
 
 import {
-  id = "arn:aws:iam::372539347496:role/${var.lambda_function_name}-dev-lambda-exec"  # Update to use the variable
+  id = "arn:aws:iam::372539347496:role/${aws_iam_role.lambda_exec.aurora_watch_lambda_role}"  # Update to use the variable
   to = aws_iam_role.lambda_exec
 }
 
