@@ -46,12 +46,12 @@ resource "aws_lambda_function" "aurora_watch" {
 }
 
 import {
-  id = "arn:aws:iam::${var.aws_account_id}:role/${var.lambda_function_name}_lambda_role"  # Use the variable for the account ID
+  id = "arn:aws:iam::${var.aws_account_id}:role/aurora_watch_lambda_role"  # Use the variable for the account ID
   to = aws_iam_role.lambda_exec
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "${var.lambda_function_name}_lambda_role"
+  name = "aurora_watch_lambda_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -92,7 +92,3 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_lambda" {
   source_arn    = aws_cloudwatch_event_rule.every_six_hours.arn
 }
 
-output "lambda_role_name" {
-  value = aws_iam_role.lambda_exec.name  # Print the name of the IAM role
-  description = "The name of the Lambda execution role"
-}
