@@ -21,7 +21,7 @@ data "archive_file" "lambda_zip" {
 }
 
 import {
-  id = "arn:aws:lambda:${var.aws_region}:372539347496:function:${aws_lambda_function.aurora_watch.function_name}"  # Use the variable for the function name
+  id = aws_lambda_function.aurora_watch.arn 
   to = aws_lambda_function.aurora_watch
 }
 
@@ -41,7 +41,7 @@ resource "aws_lambda_function" "aurora_watch" {
 }
 
 import {
-  id = "arn:aws:iam::372539347496:role/${aws_iam_role.lambda_exec.aurora_watch_lambda_role}"  # Update to use the variable
+  id = aws_iam_role.lambda_exec.arn  # Update to use the variable
   to = aws_iam_role.lambda_exec
 }
 
