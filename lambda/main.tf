@@ -14,6 +14,11 @@ variable "lambda_function_name" {
   default     = "aurora_watch"  # Change this to your preferred default name
 }
 
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+}
+
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "aurora_watch_lambda.py"
@@ -21,7 +26,7 @@ data "archive_file" "lambda_zip" {
 }
 
 import {
-  id = aws_lambda_function.aurora_watch.arn 
+  id = "arn:aws:lambda:${var.aws_region}:${var.aws_account_id}:function:${var.lambda_function_name}"  # Use the variable for the function name
   to = aws_lambda_function.aurora_watch
 }
 
@@ -41,7 +46,7 @@ resource "aws_lambda_function" "aurora_watch" {
 }
 
 import {
-  id = aws_iam_role.lambda_exec.arn  # Update to use the variable
+  id = "arn:aws:iam::${var.aws_account_id}:role/aurora_watch_lambda_role"  # Use the variable for the account ID
   to = aws_iam_role.lambda_exec
 }
 
