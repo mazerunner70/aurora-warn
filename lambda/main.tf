@@ -46,12 +46,12 @@ resource "aws_lambda_function" "aurora_watch" {
 }
 
 import {
-  id = "arn:aws:iam::${var.aws_account_id}:role/aurora_watch_lambda_role"  # Use the variable for the account ID
+  id = "arn:aws:iam::${var.aws_account_id}:role/${var.lambda_function_name}_lambda_role"  # Use the variable for the account ID
   to = aws_iam_role.lambda_exec
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "aurora_watch_lambda_role"
+  name = "${var.lambda_function_name}_lambda_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
