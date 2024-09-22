@@ -28,6 +28,7 @@ jobs:
         cd lambda
         zip -r ../function.zip .
         ls -l
+        ls -l ..
 
 
     - name: Set up Terraform
