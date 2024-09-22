@@ -68,18 +68,24 @@ def analyze_last_six_hours():
     green_records = [item for item in response['Items'] if item['status_id'] == 'green']
     
     if green_records:
-        send_sms_notification(green_records)
+        send_email(green_records)
 
-def send_sms_notification(records):
-    message = "Alert: One or more records with Status ID 'green' detected."
+def send_email(green_records):
+    # Prepare the message
+    message = "The following records have a green status in the last six hours:\n\n"
+    for record in green_records:
+        message += f"Timestamp: {record['iso_string']}, Status ID: {record['status_id']}, Value: {record['value']}\n"
+
+    # Publish the message to the SNS topic
     try:
-        sns.publish(
-            PhoneNumber=SNS_PHONE_NUMBER,
-            Message=message
+        response = sns.publish(
+            TopicArn=os.environ['SNS_TOPIC_ARN'],  # Use the environment variable for the topic ARN
+            Message=message,
+            Subject='Green Status Notification'  # Optional subject for the email
         )
-        print(f"SMS sent: {message}")
+        print(f"Email sent! Message ID: {response['MessageId']}")
     except Exception as e:
-        print(f"Error sending SMS: {e}")
+        print(f"Error sending email: {e}")
 
 def lambda_handler(event, context):
     api_url = "https://aurorawatch-api.lancs.ac.uk/0.2.5/status/project/awn/sum-activity.xml"

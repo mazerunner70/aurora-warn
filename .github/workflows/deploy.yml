@@ -46,7 +46,7 @@ jobs:
     - name: Terraform Plan
       run: |
         cd lambda
-        terraform plan -out=tfplan -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}" -var="aws_region=${{ secrets.AWS_REGION }}" -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" -var="sns_phone_number=${{ secrets.SNS_PHONE_NUMBER }}"
+        terraform plan -out=tfplan -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}" -var="aws_region=${{ secrets.AWS_REGION }}" -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" -var="sns_email_address=${{ secrets.SNS_EMAIL_ADDRESS }}"
 
     - name: Terraform Apply
       run: |

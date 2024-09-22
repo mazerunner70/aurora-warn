@@ -49,7 +49,7 @@ resource "aws_lambda_function" "aurora_watch" {
   environment {
     variables = {
       PYTHONPATH = "/var/task"
-      SNS_PHONE_NUMBER = var.sns_phone_number
+      SNS_TOPIC_ARN = aws_sns_topic.notifications.arn  # Add this line
     }
   }
 }
@@ -133,4 +133,19 @@ resource "aws_dynamodb_table" "aurora_watch_table" {
   tags = {
     Name = "Aurora Watch DynamoDB Table"
   }
+}
+
+resource "aws_sns_topic" "notifications" {
+  name = "aurora-watch-notifications"  # Name of the SNS topic
+}
+
+resource "aws_sns_topic_subscription" "email_subscription" {
+  topic_arn = aws_sns_topic.notifications.arn
+  protocol  = "email"
+  endpoint  = var.sns_email_address  # Use a variable for the email address
+}
+
+variable "sns_email_address" {
+  description = "Email address for SNS notifications"
+  type        = string
 }
