@@ -83,7 +83,7 @@ resource "aws_iam_policy" "dynamodb_put_item" {
     Statement = [
       {
         Effect = "Allow"
-        Action = "dynamodb:PutItem"
+        Action = ["dynamodb:PutItem", "dynamodb:Scan"]
         Resource = aws_dynamodb_table.aurora_watch_table.arn
       }
     ]
