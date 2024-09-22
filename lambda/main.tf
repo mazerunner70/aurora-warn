@@ -35,11 +35,10 @@ data "archive_file" "lambda_zip" {
 }
 
 resource "aws_lambda_function" "aurora_watch" {
-  filename      = "function.zip"
+  filename      = "${path.dirname(path.module)}/../function.zip"
   function_name = var.lambda_function_name  # Use the variable for the function name
   role          = aws_iam_role.lambda_exec.arn
   handler       = "lambda_function.lambda_handler"
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   runtime          = "python3.12"
 
   environment {
