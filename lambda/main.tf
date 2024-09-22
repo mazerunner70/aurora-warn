@@ -48,10 +48,6 @@ resource "aws_lambda_function" "aurora_watch" {
   }
 }
 
-# import {
-#  id = "arn:aws:iam::${var.aws_account_id}:role/aurora_watch_lambda_role"  # Use the variable for the account ID
-#  to = aws_iam_role.lambda_exec
-# }
 
 resource "aws_iam_role" "lambda_exec" {
   name = "aurora_watch_lambda_role"
@@ -70,10 +66,10 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-#resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-#  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-#  role       = aws_iam_role.lambda_exec.name
-#}
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.lambda_exec.name
+}
 
 #resource "aws_cloudwatch_event_rule" "every_six_hours" {
 #  name                = "every-six-hours"
