@@ -65,15 +65,15 @@ def analyze_last_six_hours():
     )
     
     # Check if any records have status_id "green"
-    green_records = [item for item in response['Items'] if item['status_id'] == 'green']
+    ar_records = [item for item in response['Items'] if item['status_id'] != 'green']
     
-    if green_records:
-        send_email(green_records)
+    if ar_records:
+        send_email(ar_records)
 
-def send_email(green_records):
+def send_email(ar_records):
     # Prepare the message
-    message = "The following records have a green status in the last six hours:\n\n"
-    for record in green_records:
+    message = "The following measurements have amber or red status in the last six hours:\n\n"
+    for record in ar_records:
         message += f"Timestamp: {record['iso_string']}, Status ID: {record['status_id']}, Value: {record['value']}\n"
 
     # Publish the message to the SNS topic
@@ -81,7 +81,7 @@ def send_email(green_records):
         response = sns.publish(
             TopicArn=os.environ['SNS_TOPIC_ARN'],  # Use the environment variable for the topic ARN
             Message=message,
-            Subject='Green Status Notification'  # Optional subject for the email
+            Subject='Aurora Watch Status Notification'  # Optional subject for the email
         )
         print(f"Email sent! Message ID: {response['MessageId']}")
     except Exception as e:
