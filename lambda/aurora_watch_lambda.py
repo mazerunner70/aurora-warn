@@ -18,13 +18,7 @@ def parse_lower_thresholds(root):
         })
     return thresholds
 
-def parse_datetime(root):
-    updated_str = root.find('.//updated/datetime').text
-    dt = datetime.strptime(updated_str, "%Y-%m-%dT%H:%M:%S%z")
-    return {
-        'epoch': int(dt.timestamp()),
-        'iso_string': dt.isoformat()
-    }
+
 
 def parse_activities(root):
     activities = []
@@ -32,7 +26,7 @@ def parse_activities(root):
         datetime_str = activity.find('datetime').text
         dt = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S%z")
         activity_record = {
-            'epochtime': int(dt.timestamp()),
+            'epoch': int(dt.timestamp()),            
             'iso_string': dt.isoformat(),
             'status_id': activity.get('status_id'),
             'value': float(activity.find('value').text)
