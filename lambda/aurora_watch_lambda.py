@@ -1,14 +1,19 @@
 import json
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import boto3
+import os  # Import os to access environment variables
 from decimal import Decimal  # Add this import
 
-# Initialize DynamoDB client
+# Initialize DynamoDB and SNS clients
 dynamodb = boto3.resource('dynamodb')
+sns = boto3.client('sns')
 table_name = 'aurora-warn-uk' 
 table = dynamodb.Table(table_name)
+
+# Get the SNS phone number from environment variables
+SNS_PHONE_NUMBER = os.environ.get('SNS_PHONE_NUMBER')  # Read from environment variable
 
 def parse_lower_thresholds(root):
     thresholds = []
@@ -49,6 +54,33 @@ def write_to_dynamodb(activity):
     except Exception as e:
         print(f"Error writing to DynamoDB: {e}")
 
+def analyze_last_six_hours():
+    six_hours_ago = datetime.now(timezone.utc) - timedelta(hours=6)
+    six_hours_epoch = int(six_hours_ago.timestamp())
+
+    # Scan the DynamoDB table for records in the last six hours
+    response = table.scan(
+        FilterExpression="epochtime >= :six_hours_epoch",
+        ExpressionAttributeValues={":six_hours_epoch": Decimal(six_hours_epoch)}
+    )
+    
+    # Check if any records have status_id "green"
+    green_records = [item for item in response['Items'] if item['status_id'] == 'green']
+    
+    if green_records:
+        send_sms_notification(green_records)
+
+def send_sms_notification(records):
+    message = "Alert: One or more records with Status ID 'green' detected."
+    try:
+        sns.publish(
+            PhoneNumber=SNS_PHONE_NUMBER,
+            Message=message
+        )
+        print(f"SMS sent: {message}")
+    except Exception as e:
+        print(f"Error sending SMS: {e}")
+
 def lambda_handler(event, context):
     api_url = "https://aurorawatch-api.lancs.ac.uk/0.2.5/status/project/awn/sum-activity.xml"
     
@@ -63,6 +95,9 @@ def lambda_handler(event, context):
         datetime_info = parse_datetime(root)
         lower_thresholds = parse_lower_thresholds(root)
         activities = parse_activities(root)
+        
+        # Analyze the last six hours for green status
+        analyze_last_six_hours()
         
         result = {
             'datetime': datetime_info,
