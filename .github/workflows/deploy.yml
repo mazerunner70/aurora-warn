@@ -46,7 +46,7 @@ jobs:
     - name: Terraform Apply
       run: |
         cd lambda
-        terraform apply -auto-approve -var="lambda_function_name=${{ secrets.LAMBDA_FUNCTION_NAME }}" -var="aws_region=${{ secrets.AWS_REGION }}" -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" tfplan
+        terraform apply -auto-approve tfplan
 
     - name: Build Lambda function
       run: |
