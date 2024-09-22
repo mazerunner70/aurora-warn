@@ -3,10 +3,11 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 import boto3
+from decimal import Decimal  # Add this import
 
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
-table_name = 'aurora-warn-uk'  # Replace with your DynamoDB table name
+table_name = 'aurora-warn-uk' 
 table = dynamodb.Table(table_name)
 
 def parse_lower_thresholds(root):
@@ -35,7 +36,7 @@ def parse_activities(root):
             'epoch': int(dt.timestamp()),            
             'iso_string': dt.isoformat(),
             'status_id': activity.get('status_id'),
-            'value': float(activity.find('value').text)
+            'value': Decimal(activity.find('value').text)
         }
         activities.append(activity_record)
         write_to_dynamodb(activity_record)  # Write each activity to DynamoDB
