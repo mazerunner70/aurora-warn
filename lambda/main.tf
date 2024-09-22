@@ -3,10 +3,6 @@ variable "aws_region" {
   type        = string
   default     = "eu-west-2"  # Change this to your preferred default region
 }
-variable "sns_phone_number" {
-  description = "Phone number for SNS notifications"
-  type        = string
-}
 
 provider "aws" {
   region = var.aws_region  # Use the variable for the region
