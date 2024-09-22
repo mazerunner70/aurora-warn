@@ -131,6 +131,30 @@ resource "aws_dynamodb_table" "aurora_watch_table" {
   }
 }
 
+
+# SNS email configuration
+
+resource "aws_iam_policy" "sns_publish_policy" {
+  name        = "SNSPublishPolicy"
+  description = "Policy to allow Lambda function to publish to SNS"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "sns:Publish"
+        Resource = aws_sns_topic.notifications.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_sns_publish_policy" {
+  policy_arn = aws_iam_policy.sns_publish_policy.arn
+  role       = aws_iam_role.lambda_exec.name
+}
+
 resource "aws_sns_topic" "notifications" {
   name = "aurora-watch-notifications"  # Name of the SNS topic
 }
