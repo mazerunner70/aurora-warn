@@ -31,7 +31,7 @@ variable "aws_account_id" {
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "aurora_watch_lambda.py"
-  output_path = "aurora_watch_lambda.zip"
+  output_path = "../function.zip"
 }
 
 resource "aws_lambda_function" "aurora_watch" {
@@ -40,6 +40,7 @@ resource "aws_lambda_function" "aurora_watch" {
   role          = aws_iam_role.lambda_exec.arn
   handler       = "aurora_watch_lambda.lambda_handler"
   runtime          = "python3.12"
+  source_code_hash = filebase64("../function.zip")
 
   environment {
     variables = {
