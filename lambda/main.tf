@@ -71,11 +71,11 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.lambda_exec.name
 }
 
-#resource "aws_cloudwatch_event_rule" "every_six_hours" {
-#  name                = "every-six-hours"
-#  description         = "Fires every six hours"
-#  schedule_expression = "rate(6 hours)"
-#}
+resource "aws_cloudwatch_event_rule" "every_six_hours" {
+  name                = "every-six-hours"
+  description         = "Fires every six hours"
+  schedule_expression = "rate(6 hours)"
+}
 
 #resource "aws_cloudwatch_event_target" "run_lambda_every_six_hours" {
 #  rule      = aws_cloudwatch_event_rule.every_six_hours.name
