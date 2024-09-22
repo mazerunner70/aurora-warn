@@ -72,6 +72,28 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.lambda_exec.name
 }
 
+# IAM policy for DynamoDB PutItem permission
+resource "aws_iam_policy" "dynamodb_put_item" {
+  name        = "DynamoDBPutItemPolicy"
+  description = "Policy to allow Lambda function to put items in DynamoDB"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "dynamodb:PutItem"
+        Resource = aws_dynamodb_table.aurora_watch_table.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_dynamodb_policy" {
+  policy_arn = aws_iam_policy.dynamodb_put_item.arn
+  role       = aws_iam_role.lambda_exec.name
+}
+
 resource "aws_cloudwatch_event_rule" "every_six_hours" {
   name                = "every-six-hours"
   description         = "Fires every six hours"
