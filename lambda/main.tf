@@ -77,17 +77,17 @@ resource "aws_cloudwatch_event_rule" "every_six_hours" {
   schedule_expression = "rate(6 hours)"
 }
 
-#resource "aws_cloudwatch_event_target" "run_lambda_every_six_hours" {
-#  rule      = aws_cloudwatch_event_rule.every_six_hours.name
-#  target_id = "aurora_watch_lambda"
-#  arn       = aws_lambda_function.aurora_watch.arn
-#}
+resource "aws_cloudwatch_event_target" "run_lambda_every_six_hours" {
+  rule      = aws_cloudwatch_event_rule.every_six_hours.name
+  target_id = "aurora_watch_lambda"
+  arn       = aws_lambda_function.aurora_watch.arn
+}
 
-#resource "aws_lambda_permission" "allow_cloudwatch_to_call_lambda" {
-#  statement_id  = "AllowExecutionFromCloudWatch"
-#  action        = "lambda:InvokeFunction"
-#  function_name = aws_lambda_function.aurora_watch.function_name
-#  principal     = "events.amazonaws.com"
-#  source_arn    = aws_cloudwatch_event_rule.every_six_hours.arn
-#}
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.aurora_watch.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.every_six_hours.arn
+}
 
