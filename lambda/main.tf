@@ -7,6 +7,15 @@ variable "aws_region" {
 provider "aws" {
   region = var.aws_region  # Use the variable for the region
 }
+terraform {
+  backend "s3" {
+    bucket         = "mazerunner-terraform-state"  # Replace with your S3 bucket name
+    key            = "main.tfstate"  # Path within the bucket
+    region         = "eu-west-2"              # Replace with your AWS region
+    dynamodb_table = "terraform-lock-table"        # Replace with your DynamoDB table for state locking
+    encrypt        = true                      # Enable server-side encryption
+  }
+}
 
 variable "lambda_function_name" {
   description = "Name of the Lambda function"
@@ -23,11 +32,6 @@ data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "aurora_watch_lambda.py"
   output_path = "aurora_watch_lambda.zip"
-}
-
-import {
-  id = "arn:aws:lambda:${var.aws_region}:${var.aws_account_id}:function:${var.lambda_function_name}"  # Use the variable for the function name
-  to = aws_lambda_function.aurora_watch
 }
 
 resource "aws_lambda_function" "aurora_watch" {
