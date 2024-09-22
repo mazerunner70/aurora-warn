@@ -91,3 +91,26 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_lambda" {
   source_arn    = aws_cloudwatch_event_rule.every_six_hours.arn
 }
 
+resource "aws_dynamodb_table" "aurora_watch_table" {
+  name         = "aurora-warn-uk"  # Replace with your desired table name
+  billing_mode = "PAY_PER_REQUEST"  # Use on-demand billing mode
+
+  attribute {
+    name = "epochtime"  # Primary key attribute
+    type = "N"          # String type
+  }
+
+  # Optionally, you can add a sort key if needed
+  # attribute {
+  #   name = "datetime_epoch"
+  #   type = "N"          # Number type
+  # }
+
+  # Uncomment the following if you want to add a sort key
+  # hash_key  = "status_id"
+  # range_key = "datetime_epoch"
+
+  tags = {
+    Name = "Aurora Watch DynamoDB Table"
+  }
+}

@@ -2,6 +2,12 @@ import json
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+import boto3
+
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+table_name = 'aurora-warn-uk'  # Replace with your DynamoDB table name
+table = dynamodb.Table(table_name)
 
 def parse_lower_thresholds(root):
     thresholds = []
@@ -25,15 +31,21 @@ def parse_activities(root):
     for activity in root.findall('.//activity'):
         datetime_str = activity.find('datetime').text
         dt = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S%z")
-        activities.append({
+        activity_record = {
+            'epochtime': int(dt.timestamp()),
+            'iso_string': dt.isoformat(),
             'status_id': activity.get('status_id'),
-            'datetime': {
-                'epoch': int(dt.timestamp()),
-                'iso_string': dt.isoformat()
-            },
             'value': float(activity.find('value').text)
-        })
+        }
+        activities.append(activity_record)
+        write_to_dynamodb(activity_record)  # Write each activity to DynamoDB
     return activities
+
+def write_to_dynamodb(activity):
+    try:
+        table.put_item(Item=activity)
+    except Exception as e:
+        print(f"Error writing to DynamoDB: {e}")
 
 def lambda_handler(event, context):
     api_url = "https://aurorawatch-api.lancs.ac.uk/0.2.5/status/project/awn/sum-activity.xml"
