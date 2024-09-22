@@ -38,7 +38,7 @@ resource "aws_lambda_function" "aurora_watch" {
   filename      = "../function.zip"
   function_name = var.lambda_function_name  # Use the variable for the function name
   role          = aws_iam_role.lambda_exec.arn
-  handler       = "aurora_watch-lambda.lambda_handler"
+  handler       = "aurora_watch_lambda.lambda_handler"
   runtime          = "python3.12"
 
   environment {
