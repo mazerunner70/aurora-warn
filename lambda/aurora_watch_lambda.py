@@ -33,7 +33,7 @@ def parse_activities(root):
         datetime_str = activity.find('datetime').text
         dt = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S%z")
         activity_record = {
-            'epoch': int(dt.timestamp()),            
+            'epochtime': int(dt.timestamp()),            
             'iso_string': dt.isoformat(),
             'status_id': activity.get('status_id'),
             'value': Decimal(activity.find('value').text)
