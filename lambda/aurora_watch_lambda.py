@@ -36,7 +36,7 @@ def parse_activities(root):
             'epochtime': int(dt.timestamp()),            
             'iso_string': dt.isoformat(),
             'status_id': activity.get('status_id'),
-            'value': Decimal(activity.find('value').text)
+            'value': activity.find('value').text
         }
         activities.append(activity_record)
         print(activity_record)
