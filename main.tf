@@ -4,6 +4,13 @@ variable "aws_region" {
   default     = "eu-west-2"  # Change this to your preferred default region
 }
 
+variable "harvest_lambda_function_name" {
+  description = "Name of the Lambda function"
+  type        = string
+  default     = "aurora_watch"  # Change this to your preferred default name
+}
+
+
 provider "aws" {
   region = var.aws_region  # Use the variable for the region
 }
@@ -21,6 +28,7 @@ terraform {
 module "lambda" {
   source     = "./lambda"
   aws_region = var.aws_region  # Pass the aws_region variable to the lambda module
+  lambda_function_name = var.harvest_lambda_function_name
 }
 
 module "service" {
