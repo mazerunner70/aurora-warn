@@ -4,19 +4,6 @@ variable "aws_region" {
   default     = "eu-west-2"  # Change this to your preferred default region
 }
 
-provider "aws" {
-  region = var.aws_region  # Use the variable for the region
-}
-terraform {
-  backend "s3" {
-    bucket         = "mazerunner-terraform-state"  # Replace with your S3 bucket name
-    key            = "main.tfstate"  # Path within the bucket
-    region         = "eu-west-2"              # Replace with your AWS region
-    dynamodb_table = "terraform-lock-table"        # Replace with your DynamoDB table for state locking
-    encrypt        = true                      # Enable server-side encryption
-  }
-}
-
 variable "lambda_function_name" {
   description = "Name of the Lambda function"
   type        = string
