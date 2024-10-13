@@ -14,11 +14,11 @@ variable "lambda_function_name" {
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "aurora_watch_lambda.py"
-  output_path = "../function.zip"
+  output_path = "function.zip"
 }
 
 resource "aws_lambda_function" "aurora_watch" {
-  filename      = "../function.zip"
+  filename      = "function.zip"
   function_name = var.lambda_function_name  # Use the variable for the function name
   role          = aws_iam_role.lambda_exec.arn
   handler       = "aurora_watch_lambda.lambda_handler"
