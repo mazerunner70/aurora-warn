@@ -10,10 +10,6 @@ variable "lambda_function_name" {
   default     = "aurora_watch"  # Change this to your preferred default name
 }
 
-variable "aws_account_id" {
-  description = "AWS Account ID"
-  type        = string
-}
 
 data "archive_file" "lambda_zip" {
   type        = "zip"

@@ -10,6 +10,11 @@ variable "harvest_lambda_function_name" {
   default     = "aurora_watch"  # Change this to your preferred default name
 }
 
+variable "sns_email_address" {
+  description = "Email address for SNS notifications"
+  type        = string
+}
+
 
 provider "aws" {
   region = var.aws_region  # Use the variable for the region
@@ -29,6 +34,7 @@ module "lambda" {
   source     = "./lambda"
   aws_region = var.aws_region  # Pass the aws_region variable to the lambda module
   lambda_function_name = var.harvest_lambda_function_name
+  sns_email_address = var.sns_email_address
 }
 
 module "service" {
