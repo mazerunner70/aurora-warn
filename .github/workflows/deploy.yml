@@ -26,7 +26,9 @@ jobs:
     - name: Build Lambda function
       run: |
         cd lambda
+        ls -l
         zip -r ../function.zip .
+        ls -l ../
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v3
