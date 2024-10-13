@@ -12,7 +12,7 @@ terraform {
   backend "s3" {
     bucket         = "mazerunner-terraform-state"  # Replace with your S3 bucket name
     key            = "main.tfstate"  # Path within the bucket
-    region         = var.aws_region              # Replace with your AWS region
+    region         = "eu-west-2"              # Replace with your AWS region
     dynamodb_table = "terraform-lock-table"        # Replace with your DynamoDB table for state locking
     encrypt        = true                      # Enable server-side encryption
   }
