@@ -10,10 +10,21 @@ variable "lambda_function_name" {
   default     = "aurora_watch"  # Change this to your preferred default name
 }
 
+locals {
+  # Specify the directory path
+  directory_path = "./"  # Adjust the path as needed
+
+  # Get a list of all .txt files in the directory
+  txt_files = fileset(local.directory_path, "*.*")
+}
+
+output "text_files" {
+  value = local.txt_files
+}
 
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_file = "aurora_watch_lambda.py"
+  source_file = "./aurora_watch_lambda.py"
   output_path = "function.zip"
 }
 
