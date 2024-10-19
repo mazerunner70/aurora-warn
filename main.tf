@@ -47,6 +47,31 @@ moved {
 }
 
 moved {
-  from = aws_cloudwatch_event_rule.every_six_hours
-  to   = module.lambda.aws_cloudwatch_event_rule.every_six_hours
+  from = aws_cloudwatch_event_target.run_lambda_every_six_hours
+  to   = module.lambda.aws_cloudwatch_event_target.run_lambda_every_six_hours
+}
+
+moved {
+  from = aws_lambda_permission.allow_cloudwatch_to_call_lambda
+  to   = module.lambda.aws_lambda_permission.allow_cloudwatch_to_call_lambda
+}
+
+moved {
+  from = aws_iam_policy.dynamodb_put_item
+  to   = module.lambda.aws_iam_policy.dynamodb_put_item
+}
+
+moved {
+  from = aws_iam_policy.sns_publish_policy
+  to   = module.lambda.aws_iam_policy.sns_publish_policy
+}
+
+moved {
+  from = aws_iam_role.lambda_exec
+  to   = module.lambda.aws_iam_role.lambda_exec
+}
+
+moved {
+  from = aws_iam_role_policy_attachment.attach_dynamodb_policy
+  to   = module.lambda.aws_iam_role_policy_attachment.attach_dynamodb_policy
 }
