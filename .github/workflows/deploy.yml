@@ -27,7 +27,7 @@ jobs:
       run: |
         cd lambda
         ls -l
-        zip -r ../function.zip .
+        zip -r ../harvest-function.zip .
         ls -l ../ 
 
     - name: Set up Terraform
