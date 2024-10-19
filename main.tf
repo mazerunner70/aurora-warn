@@ -75,3 +75,48 @@ moved {
   from = aws_iam_role_policy_attachment.attach_dynamodb_policy
   to   = module.lambda.aws_iam_role_policy_attachment.attach_dynamodb_policy
 }
+
+moved {
+  from = aws_dynamodb_table.aurora_watch_table
+  to   = module.lambda.aws_dynamodb_table.aurora_watch_table
+}
+
+moved {
+  from = aws_iam_role_policy_attachment.attach_sns_publish_policy
+  to   = module.lambda.aws_iam_role_policy_attachment.attach_sns_publish_policy
+}
+
+moved {
+  from = aws_iam_role_policy_attachment.lambda_basic_execution
+  to   = module.lambda.aws_iam_role_policy_attachment.lambda_basic_execution
+}
+
+moved {
+  from = aws_sns_topic.notifications
+  to   = module.lambda.aws_sns_topic.notifications
+}
+
+moved {
+  from = aws_sns_topic_subscription.email_subscription
+  to   = module.lambda.aws_sns_topic_subscription.email_subscription
+}
+
+moved {
+  from = aws_iam_role.lambda_role
+  to   = module.lambda.aws_iam_role.lambda_role
+}
+
+moved {
+  from = aws_iam_role_policy_attachment.lambda_policy
+  to   = module.lambda.aws_iam_role_policy_attachment.lambda_policy
+}
+
+moved {
+  from = aws_lambda_function.graphql_lambda
+  to   = module.lambda.aws_lambda_function.graphql_lambda
+}
+
+moved {
+  from = aws_lambda_function_url.lambda_url
+  to   = module.lambda.aws_lambda_function_url.lambda_url
+}
