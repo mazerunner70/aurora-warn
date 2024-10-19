@@ -40,3 +40,13 @@ module "lambda" {
 module "service" {
   source = "./service"
 }
+
+moved {
+  from = aws_cloudwatch_event_rule.every_six_hours
+  to   = module.lambda.aws_cloudwatch_event_rule.every_six_hours
+}
+
+moved {
+  from = aws_cloudwatch_event_rule.every_six_hours
+  to   = module.lambda.aws_cloudwatch_event_rule.every_six_hours
+}
