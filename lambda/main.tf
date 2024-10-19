@@ -11,12 +11,12 @@ variable "lambda_function_name" {
 }
 
 resource "aws_lambda_function" "aurora_watch" {
-  filename      = "${path.module}/function.zip"
+  filename      = "${path.root}/harvest-function.zip"
   function_name = var.lambda_function_name  # Use the variable for the function name
   role          = aws_iam_role.lambda_exec.arn
   handler       = "aurora_watch_lambda.lambda_handler"
   runtime          = "python3.12"
-  source_code_hash = filebase64("${path.module}/function.zip")
+  source_code_hash = filebase64("${path.root}/harvest-function.zip")
 
   environment {
     variables = {
