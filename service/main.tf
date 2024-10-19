@@ -27,21 +27,14 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_role.name
 }
 
-# Create a ZIP archive of the Lambda function code
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_dir  = "${path.module}"  # Assumes lambda_function.py and requirements.txt are in the same directory as main.tf
-  output_path = "${path.module}/lambda_function.zip"
-}
-
 # Create the Lambda function
-resource "aws_lambda_function" "graphql_lambda" {
-  filename         = data.archive_file.lambda_zip.output_path
-  function_name    = "graphql_lambda"
+resource "aws_lambda_function" "service_lambda" {
+  filename         = "${path.root}/service-function.zip"
+  function_name    = "service_lambda"
   role             = aws_iam_role.lambda_role.arn
   handler          = "lambda_function.lambda_handler"
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.10"  # Adjust this to match your Python version
+  source_code_hash = filebase64("${path.root}/service-function.zip")
+  runtime          = "python3.12"  # Adjust this to match your Python version
 
   environment {
     variables = {
@@ -52,7 +45,7 @@ resource "aws_lambda_function" "graphql_lambda" {
 
 # Create a Lambda function URL
 resource "aws_lambda_function_url" "lambda_url" {
-  function_name      = aws_lambda_function.graphql_lambda.function_name
+  function_name      = aws_lambda_function.service_lambda.function_name
   authorization_type = "NONE"  # Change to "AWS_IAM" if you want to restrict access
 
   cors {
