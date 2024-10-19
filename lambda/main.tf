@@ -4,15 +4,10 @@ variable "aws_region" {
   default     = "eu-west-2"  # Change this to your preferred default region
 }
 
-variable "lambda_function_name" {
-  description = "Name of the Lambda function"
-  type        = string
-  default     = "aurora_watch"  # Change this to your preferred default name
-}
 
 resource "aws_lambda_function" "aurora_watch" {
   filename      = "${path.root}/harvest-function.zip"
-  function_name = var.lambda_function_name  # Use the variable for the function name
+  function_name = "aurora-watch-uk"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "aurora_watch_lambda.lambda_handler"
   runtime          = "python3.12"
