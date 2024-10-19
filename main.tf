@@ -120,3 +120,9 @@ moved {
   from = aws_lambda_function_url.lambda_url
   to   = module.lambda.aws_lambda_function_url.lambda_url
 }
+
+moved {
+  from = aws_lambda_function.aurora_watch
+  to   = module.lambda.aws_lambda_function.aurora_watch
+}
+
