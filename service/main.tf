@@ -137,3 +137,9 @@ output "cognito_user_pool_id" {
 output "cognito_app_client_id" {
   value = aws_cognito_user_pool_client.client.id
 }
+
+# Attach DynamoDB read policy to the Lambda role
+resource "aws_iam_role_policy_attachment" "lambda_dynamodb_read" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
+  role       = aws_iam_role.lambda_role.name
+}
