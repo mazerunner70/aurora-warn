@@ -35,10 +35,6 @@ module "service" {
 }
 
 # Output service module outputs
-output "service_endpoint" {
-  description = "The endpoint of the service"
-  value       = module.service.service_endpoint
-}
 
 # Output the API URL from the service module
 output "api_url" {
