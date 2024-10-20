@@ -83,7 +83,7 @@ resource "aws_cognito_user_pool_client" "client" {
 
 # Add Cognito Domain for hosted UI
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = "graphql-app-${random_id.id.hex}"
+  domain       = "aurora-warn"
   user_pool_id = aws_cognito_user_pool.pool.id
 }
 
