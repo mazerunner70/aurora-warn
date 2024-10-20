@@ -58,13 +58,31 @@ resource "aws_cognito_user_pool" "pool" {
   auto_verified_attributes = ["email"]
 }
 
-# Create Cognito User Pool Client
+# Update Cognito User Pool Client
 resource "aws_cognito_user_pool_client" "client" {
   name         = "graphql-app-client"
   user_pool_id = aws_cognito_user_pool.pool.id
 
   generate_secret     = false
-  explicit_auth_flows = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+  explicit_auth_flows = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
+
+  # Add support for hosted UI
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["openid"]
+  allowed_oauth_flows_user_pool_client = true
+  callback_urls                        = ["https://localhost:3000"]
+  supported_identity_providers         = ["Cognito user pool"]
+}
+
+# Add Cognito Domain for hosted UI
+resource "aws_cognito_user_pool_domain" "main" {
+  domain       = "graphql-app-${random_id.id.hex}"
+  user_pool_id = aws_cognito_user_pool.pool.id
+}
+
+# Generate a random ID for the Cognito domain
+resource "random_id" "id" {
+  byte_length = 8
 }
 
 # Create API Gateway
@@ -142,4 +160,129 @@ output "cognito_app_client_id" {
 resource "aws_iam_role_policy_attachment" "lambda_dynamodb_read" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
   role       = aws_iam_role.lambda_role.name
+}
+
+# Output Cognito Hosted UI URL
+output "cognito_hosted_ui_url" {
+  value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com/login?client_id=${aws_cognito_user_pool_client.client.id}&response_type=code&scope=email+openid+profile&redirect_uri=https://localhost:3000"
+}
+
+# Create Cognito Identity Pool
+resource "aws_cognito_identity_pool" "main" {
+  identity_pool_name               = "aurora-warn-pool"
+  allow_unauthenticated_identities = true
+
+  cognito_identity_providers {
+    client_id               = aws_cognito_user_pool_client.client.id
+    provider_name           = aws_cognito_user_pool.pool.endpoint
+    server_side_token_check = false
+  }
+}
+
+# Create IAM role for authenticated users
+resource "aws_iam_role" "authenticated" {
+  name = "service-role/aurora-warn-cognito"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = "cognito-identity.amazonaws.com"
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "cognito-identity.amazonaws.com:aud" = aws_cognito_identity_pool.main.id
+          }
+          "ForAnyValue:StringLike" = {
+            "cognito-identity.amazonaws.com:amr" = "authenticated"
+          }
+        }
+      }
+    ]
+  })
+}
+
+# Create IAM role for guest users
+resource "aws_iam_role" "unauthenticated" {
+  name = "aurora-warn-cognito-guest"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = "cognito-identity.amazonaws.com"
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "cognito-identity.amazonaws.com:aud" = aws_cognito_identity_pool.main.id
+          }
+          "ForAnyValue:StringLike" = {
+            "cognito-identity.amazonaws.com:amr" = "unauthenticated"
+          }
+        }
+      }
+    ]
+  })
+}
+
+# Attach roles to the Identity Pool
+resource "aws_cognito_identity_pool_roles_attachment" "main" {
+  identity_pool_id = aws_cognito_identity_pool.main.id
+
+  roles = {
+    authenticated   = aws_iam_role.authenticated.arn
+    unauthenticated = aws_iam_role.unauthenticated.arn
+  }
+}
+
+# Add policies to the authenticated role (customize as needed)
+resource "aws_iam_role_policy" "authenticated" {
+  name = "authenticated_policy"
+  role = aws_iam_role.authenticated.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "mobileanalytics:PutEvents",
+          "cognito-sync:*",
+          "cognito-identity:*"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Add policies to the unauthenticated role (customize as needed)
+resource "aws_iam_role_policy" "unauthenticated" {
+  name = "unauthenticated_policy"
+  role = aws_iam_role.unauthenticated.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "mobileanalytics:PutEvents",
+          "cognito-sync:*"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Output Identity Pool ID
+output "cognito_identity_pool_id" {
+  value = aws_cognito_identity_pool.main.id
 }
