@@ -43,6 +43,30 @@ resource "aws_lambda_function" "service_lambda" {
   }
 }
 
+# Create Cognito User Pool
+resource "aws_cognito_user_pool" "pool" {
+  name = "graphql-user-pool"
+
+  password_policy {
+    minimum_length    = 8
+    require_lowercase = true
+    require_numbers   = true
+    require_symbols   = true
+    require_uppercase = true
+  }
+
+  auto_verified_attributes = ["email"]
+}
+
+# Create Cognito User Pool Client
+resource "aws_cognito_user_pool_client" "client" {
+  name         = "graphql-app-client"
+  user_pool_id = aws_cognito_user_pool.pool.id
+
+  generate_secret     = false
+  explicit_auth_flows = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+}
+
 # Create API Gateway
 resource "aws_api_gateway_rest_api" "api" {
   name = "graphql-api"
@@ -55,12 +79,21 @@ resource "aws_api_gateway_resource" "resource" {
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
 
+# Create Cognito Authorizer
+resource "aws_api_gateway_authorizer" "cognito" {
+  name          = "cognito-authorizer"
+  type          = "COGNITO_USER_POOLS"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  provider_arns = [aws_cognito_user_pool.pool.arn]
+}
+
 # Create API Gateway method
 resource "aws_api_gateway_method" "method" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.resource.id
   http_method   = "ANY"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = aws_api_gateway_authorizer.cognito.id
 }
 
 # Create API Gateway integration
@@ -95,21 +128,12 @@ output "api_url" {
   value = "${aws_api_gateway_deployment.deployment.invoke_url}/${aws_api_gateway_resource.resource.path_part}"
 }
 
-# Keep the Lambda Function URL (optional, you can remove if not needed)
-resource "aws_lambda_function_url" "lambda_url" {
-  function_name      = aws_lambda_function.service_lambda.function_name
-  authorization_type = "NONE"
-
-  cors {
-    allow_credentials = true
-    allow_origins     = ["*"]
-    allow_methods     = ["GET", "POST"]
-    allow_headers     = ["*"]
-    expose_headers    = ["keep-alive", "date"]
-  }
+# Output Cognito User Pool ID
+output "cognito_user_pool_id" {
+  value = aws_cognito_user_pool.pool.id
 }
 
-# Output the Lambda function URL (optional, you can remove if not needed)
-output "lambda_url" {
-  value = aws_lambda_function_url.lambda_url.function_url
+# Output Cognito App Client ID
+output "cognito_app_client_id" {
+  value = aws_cognito_user_pool_client.client.id
 }
