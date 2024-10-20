@@ -26,13 +26,38 @@ terraform {
 
 module "lambda" {
   source     = "./lambda"
-  aws_region = var.aws_region  # Pass the aws_region variable to the lambda module
+  aws_region = var.aws_region
   sns_email_address = var.sns_email_address
 }
 
 module "service" {
   source = "./service"
 }
+
+# Output lambda module outputs
+output "lambda_function_arn" {
+  description = "The ARN of the Lambda function"
+  value       = module.lambda.lambda_function_arn
+}
+
+output "lambda_function_name" {
+  description = "The name of the Lambda function"
+  value       = module.lambda.lambda_function_name
+}
+
+# Output service module outputs
+output "service_endpoint" {
+  description = "The endpoint of the service"
+  value       = module.service.service_endpoint
+}
+
+# Output the API URL from the service module
+output "api_url" {
+  description = "The URL of the API Gateway"
+  value       = module.service.api_url
+}
+
+# You can add more outputs as needed
 
 moved {
   from = aws_cloudwatch_event_rule.every_six_hours
@@ -118,4 +143,3 @@ moved {
   from = aws_lambda_function.aurora_watch
   to   = module.lambda.aws_lambda_function.aurora_watch
 }
-
