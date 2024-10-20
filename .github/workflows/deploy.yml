@@ -54,7 +54,7 @@ jobs:
 
     - name: Terraform Plan
       run: |
-        terraform plan -out=tfplan -var="aws_region=${{ secrets.AWS_REGION }}" -var="sns_email_address=${{ secrets.SNS_EMAIL_ADDRESS }}"
+        terraform plan -out=tfplan -var="aws_region=${{ secrets.AWS_REGION }}" -var="sns_email_address=${{ secrets.SNS_EMAIL_ADDRESS }}" -var="region=${{ secrets.AWS_REGION }}"
 
     - name: Terraform Apply
       run: |

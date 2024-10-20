@@ -32,6 +32,7 @@ module "lambda" {
 
 module "service" {
   source = "./service"
+  region = var.aws_region  # Pass the region to the service module
 }
 
 # Output service module outputs

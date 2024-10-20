@@ -1,6 +1,13 @@
+# Define the region variable
+variable "region" {
+  description = "The AWS region to deploy resources"
+  type        = string
+  default     = "eu-west-2"  # You can change this default value
+}
+
 # Configure the AWS provider
 provider "aws" {
-  region = "eu-west-2"  # Change this to your preferred region
+  region = var.region  # Use the variable here
 }
 
 # Create an IAM role for the Lambda function
@@ -162,9 +169,9 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_read" {
   role       = aws_iam_role.lambda_role.name
 }
 
-# Output Cognito Hosted UI URL
+# Update the Cognito Hosted UI URL output
 output "cognito_hosted_ui_url" {
-  value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com/login?client_id=${aws_cognito_user_pool_client.client.id}&response_type=code&scope=email+openid+profile&redirect_uri=https://localhost:3000"
+  value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com/login?client_id=${aws_cognito_user_pool_client.client.id}&response_type=code&scope=openid&redirect_uri=https://localhost:3000"
 }
 
 # Create Cognito Identity Pool
