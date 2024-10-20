@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  test_and_deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -16,29 +16,27 @@ jobs:
       with:
         python-version: '3.12'
 
-    - name: Install harvest lambda dependencies
+    - name: Install global dependencies
       run: |
-        cd lambda
-        ls -l
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install requests  # For API Gateway test
 
-    - name: Build service lambda function
+    - name: Install and build harvest lambda
       run: |
         cd lambda
+        pip install -r requirements.txt -t .
         zip -r ../harvest-function.zip .
 
-    - name: Install service lambda dependencies
+    - name: Install and build service lambda
       run: |
         cd service
-        ls -l
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-  
-    - name: Build service lambda function
+        pip install -r requirements.txt -t .
+        zip -r ../service-function.zip .
+
+    - name: Run unit tests
       run: |
         cd service
-        zip -r ../service-function.zip .    
+        python -m unittest discover -v
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v3
@@ -65,4 +63,7 @@ jobs:
     - name: Terraform Output
       run: |
         terraform output
-      
+
+    - name: Run API Gateway test
+      run: |
+        python test_api_gateway.py
