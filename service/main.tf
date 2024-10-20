@@ -73,12 +73,15 @@ resource "aws_cognito_user_pool_client" "client" {
   generate_secret     = false
   explicit_auth_flows = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 
-  # Add support for hosted UI
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["openid"]
   allowed_oauth_flows_user_pool_client = true
   callback_urls                        = ["https://localhost:3000"]
   supported_identity_providers         = ["COGNITO"]
+
+  access_token_validity  = 3600          # 1 hour
+  id_token_validity      = 3600          # 1 hour
+  refresh_token_validity  = 2592000      # 30 days
 }
 
 # Add Cognito Domain for hosted UI
