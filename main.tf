@@ -34,17 +34,6 @@ module "service" {
   source = "./service"
 }
 
-# Output lambda module outputs
-output "lambda_function_arn" {
-  description = "The ARN of the Lambda function"
-  value       = module.lambda.lambda_function_arn
-}
-
-output "lambda_function_name" {
-  description = "The name of the Lambda function"
-  value       = module.lambda.lambda_function_name
-}
-
 # Output service module outputs
 output "service_endpoint" {
   description = "The endpoint of the service"
