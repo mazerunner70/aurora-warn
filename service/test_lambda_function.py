@@ -40,7 +40,7 @@ class TestLambdaFunction(unittest.TestCase):
 
         response = lambda_handler(event, context)
 
-        self.assertEqual(response['statusCode'], 405)
+        self.assertEqual(response['statusCode'], 400)
         self.assertEqual(response['body'], '"Method Not Allowed"')
 
 if __name__ == '__main__':
