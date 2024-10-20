@@ -188,7 +188,7 @@ resource "aws_cognito_identity_pool" "main" {
 
 # Create IAM role for authenticated users
 resource "aws_iam_role" "authenticated" {
-  name = "service-role/aurora-warn-cognito"
+  name = "aurora-warn-cognito"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
