@@ -78,7 +78,7 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_scopes                 = ["openid"]
   allowed_oauth_flows_user_pool_client = true
   callback_urls                        = ["https://localhost:3000"]
-  supported_identity_providers         = ["Cognito user pool"]
+  supported_identity_providers         = ["COGNITO"]
 }
 
 # Add Cognito Domain for hosted UI
