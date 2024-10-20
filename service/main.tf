@@ -79,9 +79,9 @@ resource "aws_cognito_user_pool_client" "client" {
   callback_urls                        = ["https://localhost:3000"]
   supported_identity_providers         = ["COGNITO"]
 
-  access_token_validity  = 3600          # 1 hour
-  id_token_validity      = 3600          # 1 hour
-  refresh_token_validity  = 2592000      # 30 days
+  access_token_validity  = 1          # 1 hour
+  id_token_validity      = 1          # 1 hour
+  refresh_token_validity  = 30      # 30 days
 }
 
 # Add Cognito Domain for hosted UI
