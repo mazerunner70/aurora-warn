@@ -36,7 +36,7 @@ jobs:
     - name: Run unit tests
       run: |
         cd service
-        python -m unittest service/test_lambda_function.py
+        python -m unittest test_lambda_function.py
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v3
