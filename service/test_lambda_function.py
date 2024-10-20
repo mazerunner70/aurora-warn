@@ -41,7 +41,7 @@ class TestLambdaFunction(unittest.TestCase):
         response = lambda_handler(event, context)
 
         self.assertEqual(response['statusCode'], 400)
-        self.assertEqual(response['body'], 'No GraphQL query found in the request')
+        self.assertEqual(response['body'], '{"error": "No GraphQL query found in the request"}')
 
 if __name__ == '__main__':
     unittest.main()
