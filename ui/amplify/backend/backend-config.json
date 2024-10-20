@@ -1,0 +1,101 @@
+{
+  "auth": {
+    "aurorawarnuie16c244d": {
+      "customAuth": false,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "imported"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_aurorawarnuie16c244d_allowUnauthenticatedIdentities": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_authRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_authRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_identityPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_identityPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_unauthRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_unauthRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    },
+    "AMPLIFY_auth_aurorawarnuie16c244d_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "aurorawarnuie16c244d"
+        }
+      ]
+    }
+  }
+}

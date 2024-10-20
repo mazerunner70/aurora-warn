@@ -1,0 +1,32 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-aurorawarnui-dev-a01b7-authRole",
+      "UnauthRoleArn": "arn:aws:iam::661792079381:role/amplify-aurorawarnui-dev-a01b7-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::661792079381:role/amplify-aurorawarnui-dev-a01b7-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-aurorawarnui-dev-a01b7-deployment",
+      "UnauthRoleName": "amplify-aurorawarnui-dev-a01b7-unauthRole",
+      "StackName": "amplify-aurorawarnui-dev-a01b7",
+      "StackId": "arn:aws:cloudformation:eu-west-2:661792079381:stack/amplify-aurorawarnui-dev-a01b7/0123d4d0-8ef2-11ef-b79c-02a60bc34a53",
+      "AmplifyAppId": "dwr9fglsp0pe2"
+    },
+    "categories": {
+      "auth": {
+        "aurorawarnuie16c244d": {
+          "userPoolId": "eu-west-2_TMLkovOmn",
+          "userPoolName": "graphql-user-pool",
+          "webClientId": "683ct6tan4b0nkq6eihuvom0d5",
+          "nativeClientId": "683ct6tan4b0nkq6eihuvom0d5",
+          "identityPoolId": "eu-west-2:50e23012-7de3-4e4d-8337-3ce70dcab720",
+          "identityPoolName": "aurora-warn-pool",
+          "allowUnauthenticatedIdentities": true,
+          "authRoleArn": "arn:aws:iam::661792079381:role/service-role/aurora-warn-cognito",
+          "authRoleName": "aurora-warn-cognito",
+          "unauthRoleArn": "arn:aws:iam::661792079381:role/service-role/Cognito_Unauthenticated_Role",
+          "unauthRoleName": "Cognito_Unauthenticated_Role"
+        }
+      }
+    }
+  }
+}
