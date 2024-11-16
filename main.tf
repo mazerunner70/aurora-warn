@@ -53,7 +53,7 @@ module "ui" {
 # Output the API URL from the service module
 output "api_url" {
   description = "The URL of the API Gateway"
-  value       = module.service.api_url
+  value       = module.ui.api_gateway_url
 }
 
 # Output Cognito configuration from the UI module
