@@ -33,6 +33,8 @@ class Query(ObjectType):
         )
 
         # Process and return the results
+        print("Response:")
+        print(response)
         entries = []
         for item in response['Items']:
             print(item)
