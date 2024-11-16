@@ -19,7 +19,7 @@ jobs:
     - name: Install global dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests  # For API Gateway test
+        pip install requests boto3 # For API Gateway test
 
     - name: Install and build harvest lambda
       run: |
