@@ -37,7 +37,9 @@ module "service" {
 module "ui" {
   source = "./ui"
   region = var.aws_region  # Pass the region to the UI module
-  depends_on = [module.service]  # Ensure service module runs first
+  providers = {
+    aws = aws
+  }
 }
 
 # Output the API URL from the service module
