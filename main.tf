@@ -25,7 +25,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.33.0"  # Adjust this to the version that supports Python 3.12
+      version = ">= 5.26"  # Adjust this to the version that supports Python 3.12
     }
   }
 }
