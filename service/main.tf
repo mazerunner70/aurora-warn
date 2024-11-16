@@ -107,3 +107,12 @@ resource "aws_iam_role_policy_attachment" "lambda_dynamodb_read" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
   role       = aws_iam_role.lambda_role.name
 }
+
+# Add these outputs at the end of the file
+output "lambda_invoke_arn" {
+  value = aws_lambda_function.service_lambda.invoke_arn
+}
+
+output "lambda_function_name" {
+  value = aws_lambda_function.service_lambda.function_name
+}

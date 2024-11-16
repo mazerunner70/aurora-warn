@@ -27,13 +27,23 @@ resource "aws_api_gateway_authorizer" "cognito" {
   provider_arns = [aws_cognito_user_pool.main.arn]
 }
 
-resource "aws_api_gateway_integration" "get_integration" {
+# Fix the integration reference and add Lambda ARN
+resource "aws_api_gateway_integration" "example_integration" {
   rest_api_id             = aws_api_gateway_rest_api.main.id
-  resource_id             = aws_api_gateway_resource.my_resource.id
-  http_method             = aws_api_gateway_method.get_method.http_method
+  resource_id             = aws_api_gateway_resource.example.id
+  http_method             = aws_api_gateway_method.example_get.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:lambda:<MYREGION>:<MYACCOUNT>:function:<MYFUNCTION>"
+  uri                     = module.service.lambda_invoke_arn
+}
+
+# Add Lambda permission for API Gateway
+resource "aws_lambda_permission" "api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.service.lambda_function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/*"
 }
 
 # API Gateway Deployment
@@ -41,6 +51,7 @@ resource "aws_api_gateway_deployment" "main" {
   rest_api_id = aws_api_gateway_rest_api.main.id
 
   depends_on = [
+    aws_api_gateway_integration.example_integration,
     aws_api_gateway_method.example_get
   ]
 
