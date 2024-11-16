@@ -10,13 +10,21 @@ resource "aws_api_gateway_resource" "example" {
   path_part   = "example"
 }
 
-# Changed from GET to POST Method
+# POST Method
 resource "aws_api_gateway_method" "example_post" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.example.id
-  http_method   = "POST"  # Changed from GET to POST
+  http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.cognito.id
+}
+
+# OPTIONS Method for CORS
+resource "aws_api_gateway_method" "example_options" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.example.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
 }
 
 # Cognito Authorizer
@@ -27,14 +35,54 @@ resource "aws_api_gateway_authorizer" "cognito" {
   provider_arns = [aws_cognito_user_pool.main.arn]
 }
 
-# Updated integration to reference POST method
+# POST Integration
 resource "aws_api_gateway_integration" "example_integration" {
   rest_api_id             = aws_api_gateway_rest_api.main.id
   resource_id             = aws_api_gateway_resource.example.id
-  http_method             = aws_api_gateway_method.example_post.http_method  # Updated reference
+  http_method             = aws_api_gateway_method.example_post.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = var.lambda_invoke_arn
+}
+
+# OPTIONS Integration for CORS
+resource "aws_api_gateway_integration" "example_options" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.example.id
+  http_method = aws_api_gateway_method.example_options.http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+# Method Response for OPTIONS
+resource "aws_api_gateway_method_response" "example_options" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.example.id
+  http_method = aws_api_gateway_method.example_options.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+# Integration Response for OPTIONS
+resource "aws_api_gateway_integration_response" "example_options" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.example.id
+  http_method = aws_api_gateway_method.example_options.http_method
+  status_code = aws_api_gateway_method_response.example_options.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
 }
 
 # Add Lambda permission for API Gateway
@@ -52,7 +100,9 @@ resource "aws_api_gateway_deployment" "main" {
 
   depends_on = [
     aws_api_gateway_integration.example_integration,
-    aws_api_gateway_method.example_post  # Updated reference
+    aws_api_gateway_integration.example_options,
+    aws_api_gateway_method.example_post,
+    aws_api_gateway_method.example_options
   ]
 
   lifecycle {
@@ -60,9 +110,21 @@ resource "aws_api_gateway_deployment" "main" {
   }
 }
 
-# API Gateway Stage
+# API Gateway Stage with method settings
 resource "aws_api_gateway_stage" "main" {
   deployment_id = aws_api_gateway_deployment.main.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
   stage_name    = var.environment
+}
+
+# Enable CORS for the stage
+resource "aws_api_gateway_method_settings" "example" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  stage_name  = aws_api_gateway_stage.main.stage_name
+  method_path = "*/*"
+
+  settings {
+    metrics_enabled = true
+    logging_level   = "INFO"
+  }
 } 

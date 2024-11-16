@@ -57,7 +57,7 @@ def make_authenticated_request(query):
 
     headers = {
         'Authorization': f'Bearer {token}',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/x-amz-json-1.1'
     }
     
     response = requests.post(
