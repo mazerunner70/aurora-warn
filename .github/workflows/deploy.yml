@@ -106,4 +106,8 @@ jobs:
 
     - name: Run API Gateway test
       run: |
+        COGNITO_CLIENT_ID=$(jq -r '.cognito_app_client_id.value' terraform_output.json)
+        COGNITO_USER_POOL_ID=$(jq -r '.cognito_user_pool_id.value' terraform_output.json)
+        COGNITO_TEST_USERNAME= "${{ secrets.TEST_USERNAME }}"
+        COGNITO_TEST_PASSWORD= "${{ secrets.TEST_USER_PASSWORD }}"
         python test_api_gateway.py
