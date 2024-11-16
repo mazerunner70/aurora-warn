@@ -3,7 +3,7 @@ import json
 import time
 from datetime import datetime, timedelta
 import boto3
-from graphene import ObjectType, String, Schema, Int, List, Field
+from graphene import ObjectType, String, Schema, Int, List, Field, Float
 
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
@@ -12,7 +12,7 @@ table = dynamodb.Table('aurora-warn-uk')
 class AuroraEntry(ObjectType):
     epochtime = Int()
     status_id = String()
-    value = Int()
+    value = Float()
 
 class Query(ObjectType):
     hello = String(name=String(default_value="stranger"))
@@ -25,7 +25,8 @@ class Query(ObjectType):
         # Calculate the timestamp for 'days' ago
         current_time = int(time.time())
         start_time = current_time - (days * 24 * 60 * 60)
-
+        print("querying for:")
+        print(start_time)
         # Query DynamoDB
         response = table.scan(
             FilterExpression='epochtime >= :start_time',
@@ -41,7 +42,7 @@ class Query(ObjectType):
             entries.append(AuroraEntry(
                 epochtime=item['epochtime'],
                 status_id=item.get('status_id', ''),
-                value=int(item.get('value', 0))
+                value=float(item.get('value', 0))
             ))
 
         return entries
@@ -51,6 +52,8 @@ schema = Schema(query=Query)
 
 def lambda_handler(event, context):
     # Parse the GraphQL query from the event
+    print("Event:")
+    print(event)
     if 'body' in event:
         # For API Gateway or Lambda Function URL with POST method
         body = json.loads(event['body'])
@@ -65,7 +68,7 @@ def lambda_handler(event, context):
             'statusCode': 400,
             'body': json.dumps({'error': 'No GraphQL query found in the request'})
         }
-    
+    print("Executing GraphQL query:", query)
     # Execute the query
     result = schema.execute(query, variable_values=variables)
     

@@ -39,7 +39,7 @@ def test_aurora_entries():
     query {
         auroraEntries(days: 7) {
             epochtime
-            status_id
+            statusId
             value
         }
     }
@@ -58,16 +58,26 @@ def test_aurora_entries():
             entries = result['data']['auroraEntries']
             print(f"✅ Aurora entries test passed! Received {len(entries)} entries")
             
-            # Validate entry structure
+            # Validate entry structure and types
             if entries:
                 first_entry = entries[0]
-                required_fields = ['epochtime', 'status_id', 'value']
-                if all(field in first_entry for field in required_fields):
-                    print("✅ Entry structure validation passed!")
-                    return True
-                else:
-                    print("❌ Entry structure validation failed!")
-                    return False
+                # Check required fields and their types
+                validations = [
+                    ('epochtime', int),
+                    ('statusId', str),
+                    ('value', (int, float))  # value can be int or float
+                ]
+                
+                for field, expected_type in validations:
+                    if field not in first_entry:
+                        print(f"❌ Field '{field}' missing from entry!")
+                        return False
+                    if not isinstance(first_entry[field], expected_type):
+                        print(f"❌ Field '{field}' has wrong type! Expected {expected_type}, got {type(first_entry[field])}")
+                        return False
+                
+                print("✅ Entry structure and type validation passed!")
+                return True
             return True
         else:
             print("❌ Aurora entries test failed! 'auroraEntries' field not found in the response")
