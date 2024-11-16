@@ -43,7 +43,11 @@ module "service" {
 
 module "ui" {
   source = "./ui"
-  region = var.aws_region  # Pass the region to the UI module
+  region = var.aws_region
+  lambda_invoke_arn = module.service.lambda_invoke_arn
+  lambda_function_name = module.service.lambda_function_name
+  project_name = "aurora-watch"
+  environment = "prod"
 }
 
 # Output the API URL from the service module

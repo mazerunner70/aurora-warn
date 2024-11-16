@@ -1,17 +1,24 @@
-variable "aws_region" {
-  description = "AWS region"
+variable "region" {
+  description = "The AWS region to deploy resources"
   type        = string
-  default     = "us-west-2"
+}
+
+variable "lambda_invoke_arn" {
+  description = "The invoke ARN of the Lambda function"
+  type        = string
+}
+
+variable "lambda_function_name" {
+  description = "The name of the Lambda function"
+  type        = string
 }
 
 variable "project_name" {
-  description = "Project name"
+  description = "The name of the project"
   type        = string
-  default     = "my-amplify-api"
 }
 
 variable "environment" {
-  description = "Environment (dev/prod)"
+  description = "The deployment environment"
   type        = string
-  default     = "dev"
 } 
