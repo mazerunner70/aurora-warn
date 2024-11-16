@@ -212,7 +212,7 @@ resource "aws_iam_role" "authenticated" {
         }
       }
     ]
-  })
+  }) 
 }
 
 # Create IAM role for guest users
