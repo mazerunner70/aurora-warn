@@ -90,7 +90,7 @@ resource "aws_api_gateway_deployment" "deployment" {
 
 # Grant API Gateway permission to invoke Lambda
 resource "aws_lambda_permission" "apigw_lambda" {
-  statement_id  = "AllowAPIGatewayInvoke1"
+  statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.service_lambda.function_name
   principal     = "apigateway.amazonaws.com"

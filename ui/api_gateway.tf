@@ -10,11 +10,11 @@ resource "aws_api_gateway_resource" "example" {
   path_part   = "example"
 }
 
-# Example GET Method
-resource "aws_api_gateway_method" "example_get" {
+# Changed from GET to POST Method
+resource "aws_api_gateway_method" "example_post" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.example.id
-  http_method   = "GET"
+  http_method   = "POST"  # Changed from GET to POST
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.cognito.id
 }
@@ -27,11 +27,11 @@ resource "aws_api_gateway_authorizer" "cognito" {
   provider_arns = [aws_cognito_user_pool.main.arn]
 }
 
-# Fix the integration reference and add Lambda ARN
+# Updated integration to reference POST method
 resource "aws_api_gateway_integration" "example_integration" {
   rest_api_id             = aws_api_gateway_rest_api.main.id
   resource_id             = aws_api_gateway_resource.example.id
-  http_method             = aws_api_gateway_method.example_get.http_method
+  http_method             = aws_api_gateway_method.example_post.http_method  # Updated reference
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = var.lambda_invoke_arn
@@ -52,7 +52,7 @@ resource "aws_api_gateway_deployment" "main" {
 
   depends_on = [
     aws_api_gateway_integration.example_integration,
-    aws_api_gateway_method.example_get
+    aws_api_gateway_method.example_post  # Updated reference
   ]
 
   lifecycle {
