@@ -35,6 +35,7 @@ class Query(ObjectType):
         # Process and return the results
         entries = []
         for item in response['Items']:
+            print(item)
             entries.append(AuroraEntry(
                 epochtime=item['epochtime'],
                 status_id=item.get('status_id', ''),
