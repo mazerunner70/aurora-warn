@@ -21,6 +21,13 @@ terraform {
     dynamodb_table = "terraform-lock-table"        # Replace with your DynamoDB table for state locking
     encrypt        = true                      # Enable server-side encryption
   }
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.0"  # Adjust this to the version that supports Python 3.12
+    }
+  }
 }
 
 module "lambda" {
