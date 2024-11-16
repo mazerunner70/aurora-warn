@@ -44,9 +44,6 @@ module "service" {
 module "ui" {
   source = "./ui"
   region = var.aws_region  # Pass the region to the UI module
-  providers = {
-    aws = aws
-  }
 }
 
 # Output the API URL from the service module
