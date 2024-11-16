@@ -9,7 +9,6 @@ variable "sns_email_address" {
   type        = string
 }
 
-
 provider "aws" {
   region = var.aws_region  # Use the variable for the region
 }
@@ -35,7 +34,11 @@ module "service" {
   region = var.aws_region  # Pass the region to the service module
 }
 
-# Output service module outputs
+module "ui" {
+  source = "./ui"
+  region = var.aws_region  # Pass the region to the UI module
+  depends_on = [module.service]  # Ensure service module runs first
+}
 
 # Output the API URL from the service module
 output "api_url" {
@@ -43,7 +46,21 @@ output "api_url" {
   value       = module.service.api_url
 }
 
-# You can add more outputs as needed
+# Output Cognito configuration from the UI module
+output "cognito_user_pool_id" {
+  description = "The ID of the Cognito User Pool"
+  value       = module.ui.cognito_user_pool_id
+}
+
+output "cognito_app_client_id" {
+  description = "The ID of the Cognito App Client"
+  value       = module.ui.cognito_app_client_id
+}
+
+output "cognito_identity_pool_id" {
+  description = "The ID of the Cognito Identity Pool"
+  value       = module.ui.cognito_identity_pool_id
+}
 
 moved {
   from = aws_cloudwatch_event_rule.every_six_hours
