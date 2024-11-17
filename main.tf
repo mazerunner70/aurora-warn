@@ -72,6 +72,11 @@ output "cognito_identity_pool_id" {
   value       = module.ui.cognito_identity_pool_id
 }
 
+output "bucket_name" {
+  description = "The name of the S3 bucket for the website"
+  value       = module.ui.bucket_name
+}
+
 moved {
   from = aws_cloudwatch_event_rule.every_six_hours
   to   = module.lambda.aws_cloudwatch_event_rule.every_six_hours

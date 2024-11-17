@@ -63,6 +63,7 @@ jobs:
     - name: Terraform Output
       run: |
         terraform output -json > terraform_output.json
+        cat terraform_output.json
 
     - name: Install and configure Amplify CLI
       run: |
@@ -138,4 +139,4 @@ jobs:
         ls -la ui/dist
         echo "Syncing to S3 bucket: $BUCKET_NAME"
         # Sync the dist directory to S3
-        aws s3 sync ui/dist/ s3://$BUCKET_NAME/ --delete
+        aws s3 sync ui/dist/ s3://$BUCKET_NAME --delete
