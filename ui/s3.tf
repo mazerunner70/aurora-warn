@@ -73,8 +73,7 @@ resource "aws_s3_bucket_policy" "website" {
         Principal = "*"
         Action    = [
           "s3:GetObject",
-          "s3:ListBucket",
-          "s3:ListObjectsV2"
+          "s3:ListBucket"
         ]
         Resource = [
           aws_s3_bucket.website.arn,
