@@ -112,3 +112,26 @@ jobs:
         export COGNITO_CLIENT_ID=$(jq -r '.cognito_app_client_id.value' terraform_output.json)
         export COGNITO_USER_POOL_ID=$(jq -r '.cognito_user_pool_id.value' terraform_output.json)
         python test_api_gateway.py
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install UI dependencies
+      run: |
+        cd ui
+        npm install
+
+    - name: Build UI
+      run: |
+        cd ui
+        npm run build
+
+    - name: Deploy UI to S3
+      run: |
+        # Get the bucket name from terraform output
+        BUCKET_NAME=$(jq -r '.bucket_name.value' terraform_output.json)
+        
+        # Sync the build directory to S3
+        aws s3 sync ui/build/ s3://$BUCKET_NAME/ --delete
