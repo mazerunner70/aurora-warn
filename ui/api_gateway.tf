@@ -106,11 +106,24 @@ resource "aws_lambda_permission" "api_gateway" {
 resource "aws_api_gateway_deployment" "main" {
   rest_api_id = aws_api_gateway_rest_api.main.id
 
+  # Add a trigger to force redeployment when API changes
+  triggers = {
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_resource.example.id,
+      aws_api_gateway_method.example_post.id,
+      aws_api_gateway_integration.example_integration.id,
+      aws_api_gateway_method.example_options.id,
+      aws_api_gateway_integration.example_options.id,
+    ]))
+  }
+
   depends_on = [
     aws_api_gateway_integration.example_integration,
     aws_api_gateway_integration.example_options,
     aws_api_gateway_method.example_post,
-    aws_api_gateway_method.example_options
+    aws_api_gateway_method.example_options,
+    aws_api_gateway_method_response.post_200,
+    aws_api_gateway_integration_response.post
   ]
 
   lifecycle {
@@ -118,13 +131,13 @@ resource "aws_api_gateway_deployment" "main" {
   }
 }
 
-# API Gateway Stage with method settings
+# API Gateway Stage
 resource "aws_api_gateway_stage" "main" {
   deployment_id = aws_api_gateway_deployment.main.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
   stage_name    = var.environment
 
-  # Add access log settings if needed
+  # Enable logging
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway.arn
     format = jsonencode({
@@ -138,17 +151,14 @@ resource "aws_api_gateway_stage" "main" {
       status        = "$context.status"
       protocol      = "$context.protocol"
       responseLength = "$context.responseLength"
+      authorizerError = "$context.authorizer.error"
+      authorizerStatus = "$context.authorizer.status"
+      authorizerLatency = "$context.authorizer.latency"
     })
   }
 }
 
-# Create CloudWatch Log Group for API Gateway
-resource "aws_cloudwatch_log_group" "api_gateway" {
-  name              = "/aws/apigateway/${var.project_name}-${var.environment}"
-  retention_in_days = 7
-}
-
-# Enable detailed CloudWatch metrics
+# Enable detailed CloudWatch metrics and logging
 resource "aws_api_gateway_method_settings" "all" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   stage_name  = aws_api_gateway_stage.main.stage_name
@@ -161,6 +171,60 @@ resource "aws_api_gateway_method_settings" "all" {
     throttling_burst_limit = 5000
     throttling_rate_limit  = 10000
   }
+}
+
+# CloudWatch Log Group for API Gateway
+resource "aws_cloudwatch_log_group" "api_gateway" {
+  name              = "/aws/apigateway/${var.project_name}-${var.environment}"
+  retention_in_days = 7
+}
+
+# Add API Gateway Account Settings for CloudWatch
+resource "aws_api_gateway_account" "main" {
+  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+}
+
+# IAM role for CloudWatch
+resource "aws_iam_role" "cloudwatch" {
+  name = "api_gateway_cloudwatch_global"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# IAM role policy for CloudWatch
+resource "aws_iam_role_policy" "cloudwatch" {
+  name = "api_gateway_cloudwatch_policy"
+  role = aws_iam_role.cloudwatch.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "logs:PutLogEvents",
+          "logs:GetLogEvents",
+          "logs:FilterLogEvents"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 # Add POST method response
