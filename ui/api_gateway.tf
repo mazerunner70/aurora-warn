@@ -17,6 +17,10 @@ resource "aws_api_gateway_method" "example_post" {
   http_method   = "POST"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.cognito.id
+
+  request_parameters = {
+    "method.request.header.Authorization" = true
+  }
 }
 
 # OPTIONS Method for CORS
@@ -29,11 +33,12 @@ resource "aws_api_gateway_method" "example_options" {
 
 # Cognito Authorizer
 resource "aws_api_gateway_authorizer" "cognito" {
-  name          = "cognito-authorizer"
-  type          = "COGNITO_USER_POOLS"
-  rest_api_id   = aws_api_gateway_rest_api.main.id
-  provider_arns = [aws_cognito_user_pool.main.arn]
-  identity_source = "method.request.header.Authorization"
+  name                   = "cognito-authorizer"
+  type                   = "COGNITO_USER_POOLS"
+  rest_api_id            = aws_api_gateway_rest_api.main.id
+  provider_arns          = [aws_cognito_user_pool.main.arn]
+  identity_source        = "method.request.header.Authorization"
+  identity_validation_expression = "^Bearer [-0-9a-zA-z\\.]*$"
 }
 
 # POST Integration
