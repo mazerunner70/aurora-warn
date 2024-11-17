@@ -132,6 +132,7 @@ jobs:
       run: |
         # Get the bucket name from terraform output
         BUCKET_NAME=$(jq -r '.bucket_name.value' terraform_output.json)
-        
+        pwd
+        ls -la
         # Sync the build directory to S3
         aws s3 sync ui/build/ s3://$BUCKET_NAME/ --delete
