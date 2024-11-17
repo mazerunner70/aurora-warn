@@ -39,7 +39,7 @@ resource "aws_s3_bucket_ownership_controls" "website" {
   bucket = aws_s3_bucket.website.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "ObjectWriter"
   }
   depends_on = [aws_s3_bucket_public_access_block.website]
 }
@@ -71,8 +71,15 @@ resource "aws_s3_bucket_policy" "website" {
         Sid       = "PublicReadGetObject"
         Effect    = "Allow"
         Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.website.arn}/*"
+        Action    = [
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:ListObjectsV2"
+        ]
+        Resource = [
+          aws_s3_bucket.website.arn,
+          "${aws_s3_bucket.website.arn}/*"
+        ]
       },
     ]
   })
