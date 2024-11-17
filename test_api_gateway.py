@@ -24,29 +24,11 @@ def get_auth_token():
             }
         )
         
-        # Check if the response contains a challenge
-        if 'ChallengeName' in response:
-            if response['ChallengeName'] == 'NEW_PASSWORD_REQUIRED':
-                # Handle the new password required challenge
-                new_password = "Cart2*ce"  # Prompt for new password
-                session = response['Session']  # Get the session from the response
-                
-                # Respond to the challenge
-                response = client.respond_to_auth_challenge(
-                    ClientId=CLIENT_ID,
-                    ChallengeName='NEW_PASSWORD_REQUIRED',
-                    ChallengeResponses={
-                        'NEW_PASSWORD': new_password,
-                        'USERNAME': USERNAME
-                    },
-                    Session=session
-                )
-        
-        #print("Authentication response:", response)  # Log the entire response
-        return response['AuthenticationResult']['IdToken']
-    
+        # Use AccessToken instead of IdToken
+        return response['AuthenticationResult']['AccessToken']
     except Exception as e:
         print(f"❌ Authentication failed: {str(e)}")
+        print(f"Full error response: {response if 'response' in locals() else 'No response'}")
         return None
 
 def make_authenticated_request(query):

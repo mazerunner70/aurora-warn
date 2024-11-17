@@ -20,6 +20,7 @@ resource "aws_api_gateway_method" "example_post" {
 
   request_parameters = {
     "method.request.header.Authorization" = true
+    "method.request.header.Content-Type" = true
   }
 }
 
