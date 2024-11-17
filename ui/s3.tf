@@ -3,6 +3,14 @@ resource "aws_s3_bucket" "website" {
   bucket = "${var.project_name}-${var.environment}-website-${random_string.suffix.result}"
 }
 
+# Enable versioning
+resource "aws_s3_bucket_versioning" "website" {
+  bucket = aws_s3_bucket.website.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 # Enable website hosting
 resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.website.id
@@ -26,8 +34,34 @@ resource "aws_s3_bucket_public_access_block" "website" {
   restrict_public_buckets = false
 }
 
+# Set bucket ownership controls
+resource "aws_s3_bucket_ownership_controls" "website" {
+  bucket = aws_s3_bucket.website.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+  depends_on = [aws_s3_bucket_public_access_block.website]
+}
+
+# Enable bucket ACL
+resource "aws_s3_bucket_acl" "website" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.website,
+    aws_s3_bucket_public_access_block.website,
+  ]
+
+  bucket = aws_s3_bucket.website.id
+  acl    = "public-read"
+}
+
 # Bucket policy to allow public read access
 resource "aws_s3_bucket_policy" "website" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.website,
+    aws_s3_bucket_public_access_block.website,
+  ]
+
   bucket = aws_s3_bucket.website.id
 
   policy = jsonencode({
@@ -42,8 +76,6 @@ resource "aws_s3_bucket_policy" "website" {
       },
     ]
   })
-
-  depends_on = [aws_s3_bucket_public_access_block.website]
 }
 
 # Output the website URL
