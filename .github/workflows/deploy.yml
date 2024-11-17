@@ -136,5 +136,5 @@ jobs:
         ls -la 
         ls -la ui
         ls -la ui/dist
-        # Sync the build directory to S3
-        aws s3 sync ui/build/ s3://$BUCKET_NAME/ --delete
+        # Sync the dist directory to S3
+        aws s3 sync ui/dist/ s3://$BUCKET_NAME/ --delete
