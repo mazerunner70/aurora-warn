@@ -15,7 +15,13 @@ def get_auth_token():
     """Get authentication token from Cognito using boto3"""
     try:
         client = boto3.client('cognito-idp', region_name='eu-west-2')
-        response = client.initiate_auth(
+        
+        print(f"Attempting to authenticate with username: {USERNAME}")
+        print(f"Using Client ID: {CLIENT_ID}")
+        print(f"Using User Pool ID: {USER_POOL_ID}")
+        
+        # Initial authentication attempt
+        auth_response = client.initiate_auth(
             ClientId=CLIENT_ID,
             AuthFlow='USER_PASSWORD_AUTH',
             AuthParameters={
@@ -24,11 +30,21 @@ def get_auth_token():
             }
         )
         
-        # Use AccessToken instead of IdToken
-        return response['AuthenticationResult']['AccessToken']
+        print("Auth Response:", json.dumps(auth_response, default=str, indent=2))
+        
+        if 'AuthenticationResult' in auth_response:
+            token = auth_response['AuthenticationResult']['AccessToken']
+            print(f"Token received (first 20 chars): {token[:20]}...")
+            return token
+        else:
+            print("No AuthenticationResult in response")
+            return None
+        
     except Exception as e:
         print(f"❌ Authentication failed: {str(e)}")
-        print(f"Full error response: {response if 'response' in locals() else 'No response'}")
+        print(f"Error type: {type(e)}")
+        if hasattr(e, 'response'):
+            print(f"Error response: {e.response}")
         return None
 
 def make_authenticated_request(query):

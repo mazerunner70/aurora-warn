@@ -18,6 +18,8 @@ resource "aws_api_gateway_method" "example_post" {
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.cognito.id
 
+  authorization_scopes = ["aws.cognito.signin.user.admin"]
+
   request_parameters = {
     "method.request.header.Authorization" = true
     "method.request.header.Content-Type" = true
@@ -39,7 +41,6 @@ resource "aws_api_gateway_authorizer" "cognito" {
   rest_api_id            = aws_api_gateway_rest_api.main.id
   provider_arns          = [aws_cognito_user_pool.main.arn]
   identity_source        = "method.request.header.Authorization"
-  identity_validation_expression = "^Bearer [-0-9a-zA-z\\.]*$"
 }
 
 # POST Integration
