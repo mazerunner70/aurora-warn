@@ -33,6 +33,7 @@ resource "aws_api_gateway_authorizer" "cognito" {
   type          = "COGNITO_USER_POOLS"
   rest_api_id   = aws_api_gateway_rest_api.main.id
   provider_arns = [aws_cognito_user_pool.main.arn]
+  identity_source = "method.request.header.Authorization"
 }
 
 # POST Integration
@@ -115,16 +116,70 @@ resource "aws_api_gateway_stage" "main" {
   deployment_id = aws_api_gateway_deployment.main.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
   stage_name    = var.environment
+
+  # Add access log settings if needed
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gateway.arn
+    format = jsonencode({
+      requestId      = "$context.requestId"
+      ip            = "$context.identity.sourceIp"
+      caller        = "$context.identity.caller"
+      user          = "$context.identity.user"
+      requestTime   = "$context.requestTime"
+      httpMethod    = "$context.httpMethod"
+      resourcePath  = "$context.resourcePath"
+      status        = "$context.status"
+      protocol      = "$context.protocol"
+      responseLength = "$context.responseLength"
+    })
+  }
 }
 
-# Enable CORS for the stage
-resource "aws_api_gateway_method_settings" "example" {
+# Create CloudWatch Log Group for API Gateway
+resource "aws_cloudwatch_log_group" "api_gateway" {
+  name              = "/aws/apigateway/${var.project_name}-${var.environment}"
+  retention_in_days = 7
+}
+
+# Enable detailed CloudWatch metrics
+resource "aws_api_gateway_method_settings" "all" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   stage_name  = aws_api_gateway_stage.main.stage_name
   method_path = "*/*"
 
   settings {
-    metrics_enabled = true
-    logging_level   = "INFO"
+    metrics_enabled        = true
+    logging_level         = "INFO"
+    data_trace_enabled    = true
+    throttling_burst_limit = 5000
+    throttling_rate_limit  = 10000
   }
+}
+
+# Add POST method response
+resource "aws_api_gateway_method_response" "post_200" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.example.id
+  http_method = aws_api_gateway_method.example_post.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+# Add POST integration response
+resource "aws_api_gateway_integration_response" "post" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.example.id
+  http_method = aws_api_gateway_method.example_post.http_method
+  status_code = aws_api_gateway_method_response.post_200.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+
+  depends_on = [
+    aws_api_gateway_integration.example_integration
+  ]
 } 

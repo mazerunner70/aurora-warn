@@ -29,6 +29,12 @@ resource "aws_cognito_user_pool_client" "client" {
     "ALLOW_USER_SRP_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH"
   ]
+
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows = ["code", "implicit"]
+  allowed_oauth_scopes = ["email", "openid"]
+  callback_urls = ["http://localhost:3000"]
+  logout_urls = ["http://localhost:3000"]
 }
 
 # Cognito Identity Pool

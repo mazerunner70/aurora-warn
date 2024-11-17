@@ -57,15 +57,23 @@ def make_authenticated_request(query):
 
     headers = {
         'Authorization': f'Bearer {token}',
-        'Content-Type': 'application/x-amz-json-1.1'
+        'Content-Type': 'application/json'
     }
+    
+    print("Request URL:", API_URL)
+    print("Request Headers:", headers)
+    print("Request Body:", {'query': query})
     
     response = requests.post(
         API_URL, 
         headers=headers,
         json={'query': query}
     )
-    print("Response:", response.request)
+    
+    print("Response Status:", response.status_code)
+    print("Response Headers:", dict(response.headers))
+    print("Response Body:", response.text)
+    
     return response
 
 def test_hello_query():
