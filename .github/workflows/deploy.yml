@@ -135,7 +135,6 @@ jobs:
         pwd
         ls -la 
         ls -la ui
-        ls -la ui/build
         ls -la ui/dist
         # Sync the build directory to S3
         aws s3 sync ui/build/ s3://$BUCKET_NAME/ --delete
