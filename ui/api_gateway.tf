@@ -238,6 +238,13 @@ resource "aws_api_gateway_method_response" "post_200" {
     "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Expose-Headers" = true
+    "method.response.header.Access-Control-Max-Age" = true
+    "method.response.header.Access-Control-Allow-Credentials" = true
+  }
+
+  response_models = {
+    "application/json" = "Empty"
   }
 }
 
@@ -248,14 +255,24 @@ resource "aws_api_gateway_integration_response" "post" {
   http_method = aws_api_gateway_method.example_post.http_method
   status_code = aws_api_gateway_method_response.post_200.status_code
 
+  # Add CORS headers
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+    "method.response.header.Access-Control-Expose-Headers" = "'*'"
+    "method.response.header.Access-Control-Max-Age" = "'3600'"
+    "method.response.header.Access-Control-Allow-Credentials" = "'true'"
+  }
+
+  # Add response template for proxy integration
+  response_templates = {
+    "application/json" = ""
   }
 
   depends_on = [
     aws_api_gateway_method.example_post,
-    aws_api_gateway_integration.example_integration
+    aws_api_gateway_integration.example_integration,
+    aws_api_gateway_method_response.post_200
   ]
 } 
