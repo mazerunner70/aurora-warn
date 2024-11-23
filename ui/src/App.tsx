@@ -8,9 +8,7 @@ Amplify.configure(awsconfig);
 const App: React.FC = () => {
   return (
     <div className="App">
-      <AuthComponent onSignOut={() => {
-        console.log('Sign out');
-      }} />
+      <AuthComponent />
     </div>
   );
 };

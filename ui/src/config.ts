@@ -1,5 +1,10 @@
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
 export const config = {
-  apiUrl: import.meta.env.VITE_API_URL || '',
+  apiUrl: process.env.VITE_API_URL || '',
 };
 
 if (!config.apiUrl) {
