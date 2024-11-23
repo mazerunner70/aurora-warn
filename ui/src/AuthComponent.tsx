@@ -3,7 +3,7 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import Graph from './Graph';
 import { fetchAuroraData } from './services/AuroraService';
-import { Auth } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 interface AuroraEntry {
   epochtime: number;
@@ -17,8 +17,11 @@ const AuthComponent: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const session = await Auth.currentSession();
-      const token = session.getAccessToken().getJwtToken();
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.payload?.sub;
+      if (!token) {
+        throw new Error('No token found');
+      }
       const response = await fetchAuroraData(token);
       
       if (response.data && response.data.auroraEntries) {
