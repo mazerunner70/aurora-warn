@@ -7,7 +7,7 @@ Amplify.configure(awsconfig);
 
 const App: React.FC = () => {
   return (
-    <div className="App">
+    <div className="App">h
       <AuthComponent />
     </div>
   );

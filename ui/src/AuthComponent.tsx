@@ -48,7 +48,7 @@ const AuthComponent: React.FC = () => {
               >
                 Refresh Data
               </button>
-              <button onClick={signOut}>Sign out</button>
+              <button onClick={signOut}>Sign ou</button>
             </div>
           </div>
 
