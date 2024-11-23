@@ -11,8 +11,8 @@ interface AuroraEntry {
 }
 
 const userPool = new CognitoUserPool({
-  UserPoolId: config.Auth.userPoolId,
-  ClientId: config.Auth.userPoolWebClientId,
+  UserPoolId: config.aws_user_pools_id,
+  ClientId: config.aws_user_pools_web_client_id,
 });
 
 const AuthComponent: React.FC = () => {
