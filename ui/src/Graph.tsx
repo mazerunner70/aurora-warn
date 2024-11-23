@@ -2,7 +2,7 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 interface GraphProps {
-    data: { epochtime: number; value: number; status_id: string }[]; // Changed to an array
+    data: { epochtime: number; value: number; statusId: string }[]; // Changed to an array
 }
 
 const Graph: React.FC<GraphProps> = ({ data }) => {
