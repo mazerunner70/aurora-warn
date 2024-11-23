@@ -16,7 +16,7 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
     const formattedData = data.map(record => ({
         date: new Date(record.epochtime).toLocaleDateString(),
         value: record.value,
-        color: colourMap[record.status_id] || '#000000', // Default to black if status_id not found
+        color: colourMap[record.statusId] || '#000000', // Default to black if status_id not found
     }));
 
 
