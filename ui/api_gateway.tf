@@ -227,7 +227,7 @@ resource "aws_iam_role_policy" "cloudwatch" {
   })
 }
 
-# Add POST method response
+# POST Method Response
 resource "aws_api_gateway_method_response" "post_200" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   resource_id = aws_api_gateway_resource.example.id
@@ -235,11 +235,13 @@ resource "aws_api_gateway_method_response" "post_200" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
   }
 }
 
-# Add POST integration response
+# POST Integration Response
 resource "aws_api_gateway_integration_response" "post" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   resource_id = aws_api_gateway_resource.example.id
@@ -247,10 +249,13 @@ resource "aws_api_gateway_integration_response" "post" {
   status_code = aws_api_gateway_method_response.post_200.status_code
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS'"
   }
 
   depends_on = [
+    aws_api_gateway_method.example_post,
     aws_api_gateway_integration.example_integration
   ]
 } 
