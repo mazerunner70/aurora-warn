@@ -83,11 +83,13 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'headers': {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin" : "*",
-        "Allow" : "GET, OPTIONS, POST",
-        "Access-Control-Allow-Methods" : "GET, OPTIONS, POST",
-        "Access-Control-Allow-Headers" : "*"
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+            'Access-Control-Expose-Headers': '*',
+            'Access-Control-Max-Age': '3600',
+            'Access-Control-Allow-Credentials': 'true'
         },
         'body': json.dumps({'data': result.data})
     }
