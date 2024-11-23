@@ -119,6 +119,16 @@ jobs:
       with:
         node-version: '18'
 
+    - name: Generate environment files
+      run: |
+        # Get the API Gateway URL from terraform output
+        API_URL=$(jq -r '.api_url.value' terraform_output.json)
+        
+        # Create .env file for UI
+        echo "VITE_API_URL=$API_URL" > ui/.env
+        echo "Environment file created:"
+        cat ui/.env
+
     - name: Install UI dependencies
       run: |
         cd ui
@@ -129,14 +139,18 @@ jobs:
         cd ui
         npm run build
 
+    - name: Display Deployment Information
+      run: |
+        echo "=== Deployment Information ==="
+        echo "API Gateway URL: $(jq -r '.api_url.value' terraform_output.json)"
+        echo "Cognito User Pool ID: $(jq -r '.cognito_user_pool_id.value' terraform_output.json)"
+        echo "Cognito App Client ID: $(jq -r '.cognito_app_client_id.value' terraform_output.json)"
+        echo "Website URL: $(jq -r '.website_url.value' terraform_output.json)"
+        echo "==========================="
+
     - name: Deploy UI to S3
       run: |
         # Get the bucket name from terraform output
         BUCKET_NAME=$(jq -r '.bucket_name.value' terraform_output.json)
-        pwd
-        ls -la 
-        ls -la ui
-        ls -la ui/dist
         echo "Syncing to S3 bucket: $BUCKET_NAME"
-        # Sync the dist directory to S3
         aws s3 sync ui/dist/ s3://$BUCKET_NAME --delete
