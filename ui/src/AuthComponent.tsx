@@ -18,9 +18,11 @@ const AuthComponent: React.FC = () => {
   const fetchData = async () => {
     try {
       const session = await fetchAuthSession();
-      const token = session.tokens?.idToken?.payload?.sub;
+      const token = session.tokens?.idToken?.payload.sub;
       if (!token) {
         throw new Error('No token found');
+      } else {
+        console.log('Token:', token);
       }
       const response = await fetchAuroraData(token);
       
