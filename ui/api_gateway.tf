@@ -247,9 +247,3 @@ resource "aws_api_gateway_method_response" "post_200" {
   }
 }
 
-
-  depends_on = [
-    aws_api_gateway_method.example_post,
-    aws_api_gateway_integration.example_integration
-  ]
-} 
