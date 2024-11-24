@@ -77,6 +77,11 @@ output "bucket_name" {
   value       = module.ui.bucket_name
 }
 
+output "website_url" {
+  description = "The CloudFront distribution URL"
+  value       = module.ui.cloudfront_domain_name
+}
+
 moved {
   from = aws_cloudwatch_event_rule.every_six_hours
   to   = module.lambda.aws_cloudwatch_event_rule.every_six_hours
