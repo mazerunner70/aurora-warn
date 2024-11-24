@@ -247,22 +247,6 @@ resource "aws_api_gateway_method_response" "post_200" {
   }
 }
 
-# POST Integration Response
-resource "aws_api_gateway_integration_response" "post" {
-  rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.example.id
-  http_method = aws_api_gateway_method.example_post.http_method
-  status_code = aws_api_gateway_method_response.post_200.status_code
-
-  # Pass through CORS headers from Lambda
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"      = "integration.response.body.headers.Access-Control-Allow-Origin"
-    "method.response.header.Access-Control-Allow-Headers"     = "integration.response.body.headers.Access-Control-Allow-Headers"
-    "method.response.header.Access-Control-Allow-Methods"     = "integration.response.body.headers.Access-Control-Allow-Methods"
-    "method.response.header.Access-Control-Expose-Headers"    = "integration.response.body.headers.Access-Control-Expose-Headers"
-    "method.response.header.Access-Control-Max-Age"          = "integration.response.body.headers.Access-Control-Max-Age"
-    "method.response.header.Access-Control-Allow-Credentials" = "integration.response.body.headers.Access-Control-Allow-Credentials"
-  }
 
   depends_on = [
     aws_api_gateway_method.example_post,

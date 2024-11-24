@@ -76,10 +76,19 @@ def lambda_handler(event, context):
     if result.errors:
         return {
             'statusCode': 400,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+                'Access-Control-Expose-Headers': '*',
+                'Access-Control-Max-Age': '3600',
+                'Access-Control-Allow-Credentials': 'true'
+            },
             'body': json.dumps({'errors': [str(error) for error in result.errors]})
         }
     
-    # Return the result as a JSON response
+    # Return the result with CORS headers
     return {
         'statusCode': 200,
         'headers': {
