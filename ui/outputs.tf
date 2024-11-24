@@ -15,7 +15,8 @@ output "bucket_name" {
   value       = aws_s3_bucket.website.id
 }
 
+# Output CloudFront URL
 output "website_url" {
-  description = "The URL of the website"
-  value       = aws_s3_bucket_website_configuration.website.website_endpoint
-}
+  description = "The CloudFront distribution domain name"
+  value       = aws_cloudfront_distribution.website.domain_name
+} 
