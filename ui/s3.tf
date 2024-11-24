@@ -11,29 +11,6 @@ resource "aws_s3_bucket_versioning" "website" {
   }
 }
 
-# Enable website hosting
-resource "aws_s3_bucket_website_configuration" "website" {
-  bucket = aws_s3_bucket.website.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "index.html"
-  }
-}
-
-# Enable public access
-resource "aws_s3_bucket_public_access_block" "website" {
-  bucket = aws_s3_bucket.website.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
 # Set bucket ownership controls
 resource "aws_s3_bucket_ownership_controls" "website" {
   bucket = aws_s3_bucket.website.id
@@ -41,45 +18,37 @@ resource "aws_s3_bucket_ownership_controls" "website" {
   rule {
     object_ownership = "ObjectWriter"
   }
-  depends_on = [aws_s3_bucket_public_access_block.website]
 }
 
 # Enable bucket ACL
 resource "aws_s3_bucket_acl" "website" {
-  depends_on = [
-    aws_s3_bucket_ownership_controls.website,
-    aws_s3_bucket_public_access_block.website,
-  ]
-
+  depends_on = [aws_s3_bucket_ownership_controls.website]
   bucket = aws_s3_bucket.website.id
-  acl    = "public-read"
+  acl    = "private"
 }
 
-# Bucket policy to allow public read access
+# Update bucket policy to allow CloudFront access
 resource "aws_s3_bucket_policy" "website" {
-  depends_on = [
-    aws_s3_bucket_ownership_controls.website,
-    aws_s3_bucket_public_access_block.website,
-  ]
-
   bucket = aws_s3_bucket.website.id
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "PublicReadGetObject"
+        Sid       = "AllowCloudFrontAccess"
         Effect    = "Allow"
-        Principal = "*"
-        Action    = [
-          "s3:GetObject",
-          "s3:ListBucket"
-        ]
-        Resource = [
-          aws_s3_bucket.website.arn,
-          "${aws_s3_bucket.website.arn}/*"
-        ]
-      },
+        Principal = {
+          AWS = aws_cloudfront_origin_access_identity.website.iam_arn
+        }
+        Action   = "s3:GetObject"
+        Resource = "${aws_s3_bucket.website.arn}/*"
+      }
     ]
   })
+}
+
+# Output bucket name
+output "bucket_name" {
+  description = "The name of the S3 bucket"
+  value       = aws_s3_bucket.website.id
 }
