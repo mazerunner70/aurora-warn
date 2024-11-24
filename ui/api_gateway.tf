@@ -125,8 +125,7 @@ resource "aws_api_gateway_deployment" "main" {
     aws_api_gateway_integration.example_options,
     aws_api_gateway_method.example_post,
     aws_api_gateway_method.example_options,
-    aws_api_gateway_method_response.post_200,
-    aws_api_gateway_integration_response.post
+    aws_api_gateway_method_response.post_200
   ]
 
   lifecycle {
