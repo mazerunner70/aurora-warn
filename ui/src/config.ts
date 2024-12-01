@@ -4,8 +4,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
-  apiUrl: import.meta.env.VITE_API_URL || '',
-  cloudFrontUrl: import.meta.env.VITE_CLOUDFRONT_URL || '',
+  apiUrl: process.env.VITE_API_URL || '',
+  cloudFrontUrl: process.env.VITE_CLOUDFRONT_URL || '',
 };
 
 if (!config.cloudFrontUrl) {
