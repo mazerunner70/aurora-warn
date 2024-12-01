@@ -100,9 +100,4 @@ resource "aws_cloudfront_distribution" "website" {
   }
 }
 
-# Output CloudFront URL
-output "website_url" {
-  description = "The CloudFront distribution domain name"
-  value       = aws_cloudfront_distribution.website.domain_name
-}
 

@@ -5,7 +5,7 @@ import boto3
 import os
 
 # Configuration
-API_URL = "https://4iyxm1ix87.execute-api.eu-west-2.amazonaws.com/prod/example"
+API_URL = "https://d1ui1ympwcz4xz.cloudfront.net/prod/prod/example"
 USER_POOL_ID = os.environ.get('COGNITO_USER_POOL_ID')
 CLIENT_ID = os.environ.get('COGNITO_CLIENT_ID')
 USERNAME = os.environ.get('COGNITO_TEST_USERNAME')
