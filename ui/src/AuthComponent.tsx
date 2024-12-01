@@ -62,7 +62,7 @@ const AuthComponent: React.FC = () => {
       if (!token) {
         throw new Error('No token available');
       }
-      const response = await fetchAuroraData(token);
+      const response = await fetchAuroraData(token) as { data: { auroraEntries: RawAuroraEntry[] } };
       
       if (response.data && response.data.auroraEntries) {
         const processedData = processAuroraData(response.data.auroraEntries);
