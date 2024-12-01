@@ -12,7 +12,7 @@ table = dynamodb.Table('aurora-warn-uk')
 class AuroraEntry(ObjectType):
     epochtime = Int()
     status_id = String()
-    value = Float()
+    value = String()
 
 class Query(ObjectType):
     hello = String(name=String(default_value="stranger"))
