@@ -107,9 +107,13 @@ jobs:
 
     - name: Run API Gateway test
       env:
+        CLOUDFRONT_URL: $(jq -r '.website_url.value' terraform_output.json)
+        COGNITO_CLIENT_ID: $(jq -r '.cognito_app_client_id.value' terraform_output.json)
+        COGNITO_USER_POOL_ID: $(jq -r '.cognito_user_pool_id.value' terraform_output.json)
         COGNITO_TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
         COGNITO_TEST_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       run: |
+        export CLOUDFRONT_URL="https://$(jq -r '.website_url.value' terraform_output.json)"
         export COGNITO_CLIENT_ID=$(jq -r '.cognito_app_client_id.value' terraform_output.json)
         export COGNITO_USER_POOL_ID=$(jq -r '.cognito_user_pool_id.value' terraform_output.json)
         python test_api_gateway.py

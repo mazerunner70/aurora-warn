@@ -5,7 +5,8 @@ import boto3
 import os
 
 # Configuration
-API_URL = "https://d1ui1ympwcz4xz.cloudfront.net/prod/prod/example"
+CLOUDFRONT_URL = os.environ.get('CLOUDFRONT_URL')
+API_URL = f"{CLOUDFRONT_URL}/example"  # Use CloudFront URL with the API path
 USER_POOL_ID = os.environ.get('COGNITO_USER_POOL_ID')
 CLIENT_ID = os.environ.get('COGNITO_CLIENT_ID')
 USERNAME = os.environ.get('COGNITO_TEST_USERNAME')
@@ -19,6 +20,7 @@ def get_auth_token():
         print(f"Attempting to authenticate with username: {USERNAME}")
         print(f"Using Client ID: {CLIENT_ID}")
         print(f"Using User Pool ID: {USER_POOL_ID}")
+        print(f"Using API URL: {API_URL}")
         
         # Initial authentication attempt
         auth_response = client.initiate_auth(
@@ -55,7 +57,8 @@ def make_authenticated_request(query):
 
     headers = {
         'Authorization': f'Bearer {token}',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Origin': CLOUDFRONT_URL  # Add Origin header for CORS
     }
     
     print("Request URL:", API_URL)
