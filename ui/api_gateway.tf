@@ -24,6 +24,8 @@ resource "aws_api_gateway_method" "example_post" {
     "method.request.header.Authorization" = true
     "method.request.header.Content-Type" = true
   }
+
+  request_validator_id = aws_api_gateway_request_validator.example.id
 }
 
 # OPTIONS Method for CORS
@@ -244,5 +246,12 @@ resource "aws_api_gateway_method_response" "post_200" {
     "method.response.header.Access-Control-Max-Age"          = true
     "method.response.header.Access-Control-Allow-Credentials" = true
   }
+}
+
+resource "aws_api_gateway_request_validator" "example" {
+  name                  = "example-validator"
+  rest_api_id           = aws_api_gateway_rest_api.main.id
+  validate_request_body = true
+  validate_request_parameters = true
 }
 

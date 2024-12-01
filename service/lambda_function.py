@@ -51,6 +51,11 @@ class Query(ObjectType):
 schema = Schema(query=Query)
 
 def lambda_handler(event, context):
+    # Debug logging
+    print("Event received:", json.dumps(event, indent=2))
+    print("Headers:", event.get('headers', {}))
+    print("Authorization header:", event.get('headers', {}).get('Authorization', 'No Auth header'))
+    
     # Parse the GraphQL query from the event
     print("Event:")
     print(event)
