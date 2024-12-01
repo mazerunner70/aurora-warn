@@ -42,7 +42,7 @@ class Query(ObjectType):
             entries.append(AuroraEntry(
                 epochtime=item['epochtime'],
                 status_id=item.get('status_id', ''),
-                value=float(item.get('value', 0))
+                value=item.get('value', '')
             ))
 
         return entries

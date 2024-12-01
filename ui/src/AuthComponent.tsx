@@ -10,6 +10,12 @@ interface AuroraEntry {
   value: number;
 }
 
+interface RawAuroraEntry {
+  epochtime: number;
+  statusId: string;
+  value: string | number;
+}
+
 const userPool = new CognitoUserPool({
   UserPoolId: config.aws_user_pools_id,
   ClientId: config.aws_user_pools_web_client_id,
@@ -22,6 +28,20 @@ const AuthComponent: React.FC = () => {
   const [token, setToken] = useState<string>('');
   const [auroraData, setAuroraData] = useState<AuroraEntry[]>([]);
   const [error, setError] = useState<string>('');
+
+  const isNumeric = (value: any): boolean => {
+    return !isNaN(parseFloat(value)) && isFinite(value);
+  };
+
+  const processAuroraData = (rawData: RawAuroraEntry[]): AuroraEntry[] => {
+    return rawData
+      .filter(entry => isNumeric(entry.value)) // Filter out non-numeric values
+      .map(entry => ({
+        epochtime: entry.epochtime,
+        statusId: entry.statusId,
+        value: parseFloat(entry.value as string) // Convert to number
+      }));
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +97,9 @@ const AuthComponent: React.FC = () => {
       const response = await fetchAuroraData(token);
       
       if (response.data && response.data.auroraEntries) {
-        setAuroraData(response.data.auroraEntries);
+        const processedData = processAuroraData(response.data.auroraEntries);
+        console.log('Processed data:', processedData);
+        setAuroraData(processedData);
       }
     } catch (err) {
       console.error('Error fetching aurora data:', err);
