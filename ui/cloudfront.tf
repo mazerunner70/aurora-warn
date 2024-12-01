@@ -56,14 +56,20 @@ resource "aws_cloudfront_distribution" "website" {
 
   # Behavior for API Gateway paths
   ordered_cache_behavior {
-    path_pattern     = "/example/*"  # Match your API Gateway path
+    path_pattern     = "/example"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "API-Gateway"
 
     forwarded_values {
       query_string = true
-      headers      = ["Authorization", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method"]
+      headers      = [
+        "Authorization",
+        "Origin",
+        "Access-Control-Request-Headers",
+        "Access-Control-Request-Method",
+        "Content-Type"
+      ]
       cookies {
         forward = "none"
       }
