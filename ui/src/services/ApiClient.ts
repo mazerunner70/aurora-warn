@@ -31,7 +31,11 @@ class ApiClient {
       });
 
       console.log('Response status:', response.status);
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      const headerObj: { [key: string]: string } = {};
+      response.headers.forEach((value, key) => {
+        headerObj[key] = value;
+      });
+      console.log('Response headers:', headerObj);
       
       if (!response.ok) {
         const errorText = await response.text();
