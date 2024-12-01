@@ -36,7 +36,7 @@ class AuthService {
       });
 
       // @ts-ignore - result type is complex
-      const token = result.getIdToken().getJwtToken();
+      const token = result.getAccessToken().getJwtToken();
       return { token };
     } catch (err) {
       console.error('Error signing in:', err);
