@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { CognitoUser, AuthenticationDetails, CognitoUserPool } from 'amazon-cognito-identity-js';
 import Graph from './Graph';
 import { fetchAuroraData } from './services/AuroraService';
-import config from './aws-exports';
+import { authService } from './services/AuthService';
 
 interface AuroraEntry {
   epochtime: number;
@@ -15,11 +14,6 @@ interface RawAuroraEntry {
   statusId: string;
   value: string | number;
 }
-
-const userPool = new CognitoUserPool({
-  UserPoolId: config.aws_user_pools_id,
-  ClientId: config.aws_user_pools_web_client_id,
-});
 
 const AuthComponent: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -35,55 +29,29 @@ const AuthComponent: React.FC = () => {
 
   const processAuroraData = (rawData: RawAuroraEntry[]): AuroraEntry[] => {
     return rawData
-      .filter(entry => isNumeric(entry.value)) // Filter out non-numeric values
+      .filter(entry => isNumeric(entry.value))
       .map(entry => ({
         epochtime: entry.epochtime,
         statusId: entry.statusId,
-        value: parseFloat(entry.value as string) // Convert to number
+        value: parseFloat(entry.value as string)
       }));
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    const result = await authService.signIn(username, password);
     
-    const authenticationDetails = new AuthenticationDetails({
-      Username: username,
-      Password: password,
-    });
-
-    const cognitoUser = new CognitoUser({
-      Username: username,
-      Pool: userPool,
-    });
-
-    try {
-      const result = await new Promise((resolve, reject) => {
-        cognitoUser.authenticateUser(authenticationDetails, {
-          onSuccess: (result) => {
-            resolve(result);
-          },
-          onFailure: (err) => {
-            reject(err);
-          },
-        });
-      });
-
-      // @ts-ignore - result type is complex
-      const idToken = result.getIdToken().getJwtToken();
-      setToken(idToken);
+    if (result.token) {
+      setToken(result.token);
       setIsAuthenticated(true);
       setError('');
-    } catch (err) {
-      console.error('Error signing in:', err);
-      setError('Failed to sign in. Please check your credentials.');
+    } else {
+      setError(result.error || 'Authentication failed');
     }
   };
 
   const handleSignOut = () => {
-    const cognitoUser = userPool.getCurrentUser();
-    if (cognitoUser) {
-      cognitoUser.signOut();
-    }
+    authService.signOut();
     setIsAuthenticated(false);
     setToken('');
     setAuroraData([]);

@@ -4,11 +4,12 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
-  apiUrl: process.env.VITE_API_URL || '',
+  apiUrl: import.meta.env.VITE_API_URL || '',
+  cloudFrontUrl: import.meta.env.VITE_CLOUDFRONT_URL || '',
 };
 
-if (!config.apiUrl) {
-  console.warn('API URL is not configured');
+if (!config.cloudFrontUrl) {
+  console.warn('CloudFront URL is not configured');
 }
 
 export default config; 

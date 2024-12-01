@@ -125,13 +125,12 @@ jobs:
 
     - name: Generate environment files
       run: |
-        # Get the API Gateway URL from terraform output
         API_URL=$(jq -r '.api_url.value' terraform_output.json)
+        CLOUDFRONT_URL=$(jq -r '.website_url.value' terraform_output.json)
         
         # Create .env file for UI
         echo "VITE_API_URL=$API_URL" > ui/.env
-        echo "Environment file created:"
-        cat ui/.env
+        echo "VITE_CLOUDFRONT_URL=https://$CLOUDFRONT_URL" >> ui/.env
 
     - name: Install UI dependencies
       run: |
