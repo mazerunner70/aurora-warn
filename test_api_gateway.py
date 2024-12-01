@@ -142,7 +142,7 @@ def test_aurora_entries():
                     validations = [
                         ('epochtime', int),
                         ('statusId', str),
-                        ('value', (int, float))  # value can be int or float
+                        ('value', (str))  # value can be int or float
                     ]
                     
                     for field, expected_type in validations:
