@@ -1,10 +1,10 @@
-import config from '../config';
+import config from '../aws-exports';
 
 class ApiClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = `${config.cloudFrontUrl}/example`;
+    this.baseUrl = `${config.cloudfront_url}/example`;
   }
 
   async post<T>(query: string, token: string): Promise<T> {
@@ -13,7 +13,7 @@ class ApiClient {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'Origin': config.cloudFrontUrl
+        'Origin': config.cloudfront_url
       },
       body: JSON.stringify({ query })
     });

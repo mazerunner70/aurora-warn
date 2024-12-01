@@ -76,6 +76,7 @@ jobs:
         USER_POOL_ID=$(jq -r '.cognito_user_pool_id.value' terraform_output.json)
         APP_CLIENT_ID=$(jq -r '.cognito_app_client_id.value' terraform_output.json)
         IDENTITY_POOL_ID=$(jq -r '.cognito_identity_pool_id.value' terraform_output.json)
+        CLOUDFRONT_URL=$(jq -r '.website_url.value' terraform_output.json)
         
         # Create aws-exports.js file in the ui directory
         echo "const awsmobile = {
@@ -84,6 +85,7 @@ jobs:
           'aws_user_pools_id': '$USER_POOL_ID',
           'aws_user_pools_web_client_id': '$APP_CLIENT_ID',
           'aws_cognito_identity_pool_id': '$IDENTITY_POOL_ID',
+          'cloudfront_url': 'https://$CLOUDFRONT_URL',
           'oauth': {},
           'aws_cognito_username_attributes': [],
           'aws_cognito_social_providers': [],
@@ -122,15 +124,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '18'
-
-    - name: Generate environment files
-      run: |
-        API_URL=$(jq -r '.api_url.value' terraform_output.json)
-        CLOUDFRONT_URL=$(jq -r '.website_url.value' terraform_output.json)
-        
-        # Create .env file for UI
-        echo "VITE_API_URL=$API_URL" > ui/.env
-        echo "VITE_CLOUDFRONT_URL=https://$CLOUDFRONT_URL" >> ui/.env
 
     - name: Install UI dependencies
       run: |

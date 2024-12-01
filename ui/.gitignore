@@ -1,5 +1,4 @@
 # .gitignore
-.env
 node_modules
 dist
 aws-exports.ts
@@ -25,6 +24,3 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
-
-.env.local
-.env.*.local
