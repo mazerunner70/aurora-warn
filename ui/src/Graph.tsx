@@ -13,11 +13,13 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
         'amber': '#FFA500',
     }
 
-    const formattedData = data.map(record => ({
-        date: record.epochtime * 1000,
-        value: record.value,
-        color: colourMap[record.statusId] || '#000000',
-    }));
+    const formattedData = data
+        .sort((a, b) => a.epochtime - b.epochtime)  // Sort by epochtime
+        .map(record => ({
+            date: record.epochtime * 1000,
+            value: record.value,
+            color: colourMap[record.statusId] || '#000000',
+        }));
     console.log('formattedData', formattedData);
     const minValue = Math.min(...formattedData.map(item => item.value));
     const maxValue = Math.max(...formattedData.map(item => item.value));
