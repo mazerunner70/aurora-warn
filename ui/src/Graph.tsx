@@ -2,42 +2,40 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 interface GraphProps {
-    data: { epochtime: number; value: number; statusId: string }[]; // Changed to an array
+    data: { epochtime: number; value: number; statusId: string }[];
 }
 
 const Graph: React.FC<GraphProps> = ({ data }) => {
-    // Convert epochtime to a readable date format for the X-axis
-    const colourMap: { [key: string]: string } = { // Added index signature
+    const colourMap: { [key: string]: string } = {
         'red': '#FF0000',
         'green': '#00FF00',
         'yellow': '#FFFF00',
         'amber': '#FFA500',
     }
+
     const formattedData = data.map(record => ({
-        date: new Date(record.epochtime),
+        date: new Date(record.epochtime * 1000).toLocaleString(),
         value: record.value,
-        color: colourMap[record.statusId] || '#000000', // Default to black if status_id not found
+        color: colourMap[record.statusId] || '#000000',
     }));
 
-
-
-    // Determine the min and max values for the Y-axis
     const minValue = Math.min(...formattedData.map(item => item.value));
     const maxValue = Math.max(...formattedData.map(item => item.value));
-
-    // Calculate the midpoint
-    const midpoint = Math.round((minValue + maxValue) / 2); // Use Math.round() to get an integer
-
-    console.log('Midpoint:', midpoint); // Log the midpoint value
+    const midpoint = Math.round((minValue + maxValue) / 2);
 
     return (
         <ResponsiveContainer width="100%" height={400}>
             <LineChart data={formattedData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
+                <XAxis 
+                    dataKey="date"
+                    angle={-45}
+                    textAnchor="end"
+                    height={70}
+                />
                 <YAxis 
-                    domain={[minValue - 10, maxValue + 10]} // Set domain to cover all data with some padding
-                    ticks={[minValue, midpoint, maxValue]} // Show min, mid, and max values
+                    domain={[minValue - 10, maxValue + 10]}
+                    ticks={[minValue, midpoint, maxValue]}
                 />
                 <Tooltip />
                 <Line 
@@ -46,14 +44,14 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
                     stroke="#82ca9d"
                     dot={(props) => {
                         const { payload } = props;
-                                        return (
-                                            <circle 
-                                                cx={props.cx} 
-                                                cy={props.cy} 
-                                                r={5} 
-                                                fill={payload.color} // Set the dot color based on status_id
-                                            />
-                                        );
+                        return (
+                            <circle 
+                                cx={props.cx} 
+                                cy={props.cy} 
+                                r={5} 
+                                fill={payload.color}
+                            />
+                        );
                     }}
                 />
             </LineChart>
