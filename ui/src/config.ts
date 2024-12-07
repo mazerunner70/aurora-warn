@@ -17,5 +17,6 @@ const config: Config = {
   identityPoolId: process.env.VITE_IDENTITY_POOL_ID || '',
   cloudfrontUrl: process.env.VITE_CLOUDFRONT_URL || '',
 };
+console.log('config', config);
 
 export default config; 
