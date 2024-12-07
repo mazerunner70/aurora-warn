@@ -4,7 +4,7 @@ export const fetchAuroraData = async (token: string) => {
   return apiClient.post(
     `
     query {
-      auroraEntries(days: 7) {
+      auroraEntries(days: 1) {
         epochtime
         statusId
         value
