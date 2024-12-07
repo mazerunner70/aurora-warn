@@ -18,8 +18,7 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
         value: record.value,
         color: colourMap[record.statusId] || '#000000',
     }));
-    console.log(formattedData);
-
+    console.log('formattedData', formattedData);
     const minValue = Math.min(...formattedData.map(item => item.value));
     const maxValue = Math.max(...formattedData.map(item => item.value));
     const midpoint = Math.round((minValue + maxValue) / 2);
