@@ -15,7 +15,7 @@ class ApiClient {
     console.log('Headers:', {
       'Authorization': `Bearer ${token.substring(0, 20)}...`,
       'Content-Type': 'application/json',
-      'Origin': config.cloudfront_url
+      'Origin': config.cloudfrontUrl
     });
     console.log('Query:', query);
 
@@ -25,7 +25,7 @@ class ApiClient {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Origin': config.cloudfront_url
+          'Origin': config.cloudfrontUrl
         },
         body: JSON.stringify({ query })
       });
