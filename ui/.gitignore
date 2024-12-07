@@ -12,3 +12,5 @@ node_modules/
 aws-exports.js
 .env
 .env.*
+
+*storybook.log

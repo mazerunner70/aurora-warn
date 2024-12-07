@@ -18,6 +18,7 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
         value: record.value,
         color: colourMap[record.statusId] || '#000000',
     }));
+    console.log(formattedData);
 
     const minValue = Math.min(...formattedData.map(item => item.value));
     const maxValue = Math.max(...formattedData.map(item => item.value));
@@ -37,8 +38,7 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
                         return date.toLocaleDateString('en-GB', {
                             day: '2-digit',
                             month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit'
+                            year: '2-digit'
                         });
                     }}
                 />
