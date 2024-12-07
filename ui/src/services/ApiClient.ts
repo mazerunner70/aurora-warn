@@ -1,10 +1,10 @@
-import config from '../aws-exports';
+import config from '../config';
 
 class ApiClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = `${config.cloudfront_url}/example`;
+    this.baseUrl = `${config.cloudfrontUrl}/example`;
     console.log('API Client initialized with URL:', this.baseUrl);
   }
 

@@ -1,5 +1,5 @@
 import { CognitoUser, AuthenticationDetails, CognitoUserPool } from 'amazon-cognito-identity-js';
-import config from '../aws-exports';
+import config from '../config';
 
 interface AuthResult {
   token: string;
@@ -11,8 +11,8 @@ class AuthService {
 
   constructor() {
     this.userPool = new CognitoUserPool({
-      UserPoolId: config.aws_user_pools_id,
-      ClientId: config.aws_user_pools_web_client_id,
+      UserPoolId: config.userPoolId,
+      ClientId: config.userPoolWebClientId,
     });
   }
 
