@@ -14,7 +14,7 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
     }
 
     const formattedData = data.map(record => ({
-        date: new Date(record.epochtime * 1000).toLocaleString(),
+        date: record.epochtime * 1000,
         value: record.value,
         color: colourMap[record.statusId] || '#000000',
     }));
@@ -32,6 +32,15 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
                     angle={-45}
                     textAnchor="end"
                     height={70}
+                    tickFormatter={(value) => {
+                        const date = new Date(value);
+                        return date.toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }}
                 />
                 <YAxis 
                     domain={[minValue - 10, maxValue + 10]}
