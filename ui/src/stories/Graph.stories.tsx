@@ -23,8 +23,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     data: [
-      { epochtime: 1704067200, value: 5, statusId: 'green' },
-      { epochtime: 1704153600, value: 7, statusId: 'amber' },
+      { epochtime: 1733554800, value: 5, statusId: 'green' },
+      { epochtime: 1733583600, value: 7, statusId: 'amber' },
       { epochtime: 1704240000, value: 3, statusId: 'red' },
       { epochtime: 1704326400, value: 9, statusId: 'yellow' },
     ],

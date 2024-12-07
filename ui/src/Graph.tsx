@@ -32,14 +32,15 @@ const Graph: React.FC<GraphProps> = ({ data }) => {
                     dataKey="date"
                     angle={-45}
                     textAnchor="end"
-                    height={70}
+                    height={95}
                     tickFormatter={(value) => {
                         const date = new Date(value);
                         return date.toLocaleDateString('en-GB', {
                             day: '2-digit',
                             month: 'short',
-                            year: '2-digit'
-                        });
+                            year: '2-digit',
+                            hour: '2-digit',
+                        })+"h";
                     }}
                 />
                 <YAxis 
