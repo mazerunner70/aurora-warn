@@ -26,7 +26,9 @@ class AuthService {
       Username: username,
       Pool: this.userPool,
     });
-
+    console.log('cognitoUser', cognitoUser);
+    console.log('authenticationDetails', authenticationDetails);
+    console.log('config', config);
     try {
       const result = await new Promise((resolve, reject) => {
         cognitoUser.authenticateUser(authenticationDetails, {
