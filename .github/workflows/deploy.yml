@@ -65,43 +65,26 @@ jobs:
         terraform output -json > terraform_output.json
         cat terraform_output.json
 
-    - name: Generate aws-exports.js
+    - name: Generate .env file
       run: |
-        # Extract Cognito information from Terraform output
+        # Extract values from terraform output
         USER_POOL_ID=$(jq -r '.cognito_user_pool_id.value' terraform_output.json)
         APP_CLIENT_ID=$(jq -r '.cognito_app_client_id.value' terraform_output.json)
         IDENTITY_POOL_ID=$(jq -r '.cognito_identity_pool_id.value' terraform_output.json)
         CLOUDFRONT_URL=$(jq -r '.website_url.value' terraform_output.json)
         
-        # Create aws-exports.js file in the ui directory
-        echo "const awsmobile = {
-          'aws_project_region': '${{ secrets.AWS_REGION }}',
-          'aws_cognito_region': '${{ secrets.AWS_REGION }}',
-          'aws_user_pools_id': '$USER_POOL_ID',
-          'aws_user_pools_web_client_id': '$APP_CLIENT_ID',
-          'aws_cognito_identity_pool_id': '$IDENTITY_POOL_ID',
-          'cloudfront_url': 'https://$CLOUDFRONT_URL',
-          'oauth': {},
-          'aws_cognito_username_attributes': [],
-          'aws_cognito_social_providers': [],
-          'aws_cognito_signup_attributes': [],
-          'aws_cognito_mfa_configuration': 'OFF',
-          'aws_cognito_mfa_types': [],
-          'aws_cognito_password_protection_settings': {
-            'passwordPolicyMinLength': 8,
-            'passwordPolicyCharacters': [
-                'REQUIRES_LOWERCASE',
-                'REQUIRES_UPPERCASE',
-                'REQUIRES_NUMBERS',
-                'REQUIRES_SYMBOLS'
-            ]
-          },
-          'aws_cognito_verification_mechanisms': [
-            'EMAIL'
-          ]
-        };" > ui/src/aws-exports.ts
-        echo "export default awsmobile;" >> ui/src/aws-exports.ts
-
+        # Create .env file
+        cat > ui/.env << EOF
+        VITE_REGION=${{ secrets.AWS_REGION }}
+        VITE_USER_POOL_ID=$USER_POOL_ID
+        VITE_USER_POOL_WEB_CLIENT_ID=$APP_CLIENT_ID
+        VITE_IDENTITY_POOL_ID=$IDENTITY_POOL_ID
+        VITE_CLOUDFRONT_URL=https://$CLOUDFRONT_URL
+        EOF
+        
+        echo "Generated .env file:"
+        cat ui/.env
+  
     - name: Run API Gateway test
       env:
         CLOUDFRONT_URL: $(jq -r '.website_url.value' terraform_output.json)
@@ -146,22 +129,3 @@ jobs:
         echo "Syncing to S3 bucket: $BUCKET_NAME"
         aws s3 sync ui/dist/ s3://$BUCKET_NAME --delete
 
-    - name: Generate .env file
-      run: |
-        # Extract values from terraform output
-        USER_POOL_ID=$(jq -r '.cognito_user_pool_id.value' terraform_output.json)
-        APP_CLIENT_ID=$(jq -r '.cognito_app_client_id.value' terraform_output.json)
-        IDENTITY_POOL_ID=$(jq -r '.cognito_identity_pool_id.value' terraform_output.json)
-        CLOUDFRONT_URL=$(jq -r '.website_url.value' terraform_output.json)
-        
-        # Create .env file
-        cat > ui/.env << EOF
-        VITE_REGION=${{ secrets.AWS_REGION }}
-        VITE_USER_POOL_ID=$USER_POOL_ID
-        VITE_USER_POOL_WEB_CLIENT_ID=$APP_CLIENT_ID
-        VITE_IDENTITY_POOL_ID=$IDENTITY_POOL_ID
-        VITE_CLOUDFRONT_URL=https://$CLOUDFRONT_URL
-        EOF
-        
-        echo "Generated .env file:"
-        cat ui/.env
