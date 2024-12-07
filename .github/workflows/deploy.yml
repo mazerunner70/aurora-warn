@@ -145,3 +145,23 @@ jobs:
         BUCKET_NAME=$(jq -r '.bucket_name.value' terraform_output.json)
         echo "Syncing to S3 bucket: $BUCKET_NAME"
         aws s3 sync ui/dist/ s3://$BUCKET_NAME --delete
+
+    - name: Generate .env file
+      run: |
+        # Extract values from terraform output
+        USER_POOL_ID=$(jq -r '.cognito_user_pool_id.value' terraform_output.json)
+        APP_CLIENT_ID=$(jq -r '.cognito_app_client_id.value' terraform_output.json)
+        IDENTITY_POOL_ID=$(jq -r '.cognito_identity_pool_id.value' terraform_output.json)
+        CLOUDFRONT_URL=$(jq -r '.website_url.value' terraform_output.json)
+        
+        # Create .env file
+        cat > ui/.env << EOF
+        VITE_REGION=${{ secrets.AWS_REGION }}
+        VITE_USER_POOL_ID=$USER_POOL_ID
+        VITE_USER_POOL_WEB_CLIENT_ID=$APP_CLIENT_ID
+        VITE_IDENTITY_POOL_ID=$IDENTITY_POOL_ID
+        VITE_CLOUDFRONT_URL=https://$CLOUDFRONT_URL
+        EOF
+        
+        echo "Generated .env file:"
+        cat ui/.env
